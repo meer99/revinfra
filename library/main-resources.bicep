@@ -20,12 +20,6 @@ param vnetName string
 @description('Subnet name')
 param subnetName string
 
-@description('Subnet name for Container Apps Environment')
-param subnetCaeName string
-
-@description('Subnet address prefix for Container Apps Environment (e.g., 10.0.2.0/23)')
-param subnetCaeAddressPrefix string
-
 @description('Existing VNet resource group')
 param existingVnetResourceGroup string
 
@@ -80,18 +74,6 @@ resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' e
   parent: existingVnet
 }
 
-// Deploy/update CAE subnet with proper delegation for Microsoft.App/environments
-module subnetCae 'module/subnet.bicep' = if (envParams.deployContainerAppsEnvironment) {
-  name: 'deploy-subnet-cae-${environment}'
-  scope: resourceGroup(existingVnetResourceGroup)
-  params: {
-    vnetName: vnetName
-    subnetName: subnetCaeName
-    addressPrefix: subnetCaeAddressPrefix
-    delegateToContainerApps: true
-  }
-}
-
 // 4. Deploy Private Endpoint for Container Registry
 module privateEndpointContainerRegistry 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointContainerRegistry) {
   name: 'deploy-pe-cr-${environment}'
@@ -118,7 +100,7 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     namePattern: namePatterns.containerAppsEnvironment
     logAnalyticsCustomerId: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceCustomerId : ''
     logAnalyticsSharedKey: envParams.deployLogAnalyticsWorkspace ? listKeys(resourceId('Microsoft.OperationalInsights/workspaces', '${namePatterns.logAnalyticsWorkspace}-${environment}'), '2022-10-01').primarySharedKey : ''
-    subnetId: subnetCae.outputs.subnetId
+    subnetId: existingSubnet.id
     internal: true
   }
   dependsOn: [
