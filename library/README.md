@@ -51,6 +51,7 @@ library/
 - **Private Endpoint - SQL Server**: `pe-sql-{env}`
 
 All private endpoints connect to the existing subnet `snet-rebc` within `vnet-internal`.
+The Container Apps Environment uses a dedicated subnet `snet-rebc-cae` within the same VNet.
 
 ## Prerequisites
 
@@ -58,7 +59,8 @@ All private endpoints connect to the existing subnet `snet-rebc` within `vnet-in
 - **Subscription**: rebcsubtest
 - **Connectivity Resource Group**: rg-net
 - **Virtual Network**: vnet-internal
-- **Subnet**: snet-rebc
+- **Subnet for Private Endpoints**: snet-rebc
+- **Subnet for Container Apps Environment**: snet-rebc-cae (dedicated, must not be shared with other resources)
 
 ### Tools Required
 - Azure CLI (latest version)

@@ -20,6 +20,9 @@ param vnetName string
 @description('Subnet name')
 param subnetName string
 
+@description('Subnet name for Container Apps Environment')
+param subnetCaeName string
+
 @description('Existing VNet resource group')
 param existingVnetResourceGroup string
 
@@ -74,6 +77,11 @@ resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' e
   parent: existingVnet
 }
 
+resource existingSubnetCae 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {
+  name: subnetCaeName
+  parent: existingVnet
+}
+
 // 4. Deploy Private Endpoint for Container Registry
 module privateEndpointContainerRegistry 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointContainerRegistry) {
   name: 'deploy-pe-cr-${environment}'
@@ -100,7 +108,7 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     namePattern: namePatterns.containerAppsEnvironment
     logAnalyticsCustomerId: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceCustomerId : ''
     logAnalyticsSharedKey: envParams.deployLogAnalyticsWorkspace ? listKeys(resourceId('Microsoft.OperationalInsights/workspaces', '${namePatterns.logAnalyticsWorkspace}-${environment}'), '2022-10-01').primarySharedKey : ''
-    subnetId: existingSubnet.id
+    subnetId: existingSubnetCae.id
     internal: true
   }
   dependsOn: [

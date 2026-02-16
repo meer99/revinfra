@@ -186,6 +186,7 @@ Shared configuration:
   "subscriptionName": "rebcsubtest",
   "vnetName": "vnet-internal",
   "subnetName": "snet-rebc",
+  "subnetCaeName": "snet-rebc-cae",
   "namePatterns": { ... }
 }
 ```
