@@ -57,6 +57,19 @@ stages:
                         --parameters environment=dev
                 
                 - task: AzureCLI@2
+                  displayName: 'What-If Analysis'
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
+                    inlineScript: |
+                      az deployment sub what-if \
+                        --location $(location) \
+                        --template-file main.bicep \
+                        --parameters environment=dev
+                
+                - task: AzureCLI@2
                   displayName: 'Deploy Dev Infrastructure'
                   inputs:
                     azureSubscription: $(azureServiceConnection)
@@ -126,6 +139,19 @@ stages:
                     workingDirectory: '$(System.DefaultWorkingDirectory)/library'
                     inlineScript: |
                       az deployment sub validate \
+                        --location $(location) \
+                        --template-file main.bicep \
+                        --parameters environment=uat
+                
+                - task: AzureCLI@2
+                  displayName: 'What-If Analysis'
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
+                    inlineScript: |
+                      az deployment sub what-if \
                         --location $(location) \
                         --template-file main.bicep \
                         --parameters environment=uat
