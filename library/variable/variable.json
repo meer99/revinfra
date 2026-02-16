@@ -5,6 +5,8 @@
   "subnetName": "snet-rebc",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
+    "networkResourceGroup": "rg-network",
+    "virtualNetwork": "vnet-rebc",
     "managedIdentity": "mi-rebc",
     "containerRegistry": "acraetestrebc",
     "containerAppsEnvironment": "cae-rebc",

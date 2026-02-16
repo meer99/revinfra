@@ -1,6 +1,8 @@
 {
   "dev": {
     "deployResourceGroup": true,
+    "deployNetworkResourceGroup": true,
+    "deployVirtualNetwork": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
@@ -14,11 +16,14 @@
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Dev",
-    "existingVnetResourceGroup": "rg-network-dev",
+    "vnetAddressPrefix": "10.0.0.0/16",
+    "subnetAddressPrefix": "10.0.0.0/23",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "uat": {
     "deployResourceGroup": true,
+    "deployNetworkResourceGroup": true,
+    "deployVirtualNetwork": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
@@ -32,11 +37,14 @@
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Uat",
-    "existingVnetResourceGroup": "rg-network-uat",
+    "vnetAddressPrefix": "10.1.0.0/16",
+    "subnetAddressPrefix": "10.1.0.0/23",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "prod": {
     "deployResourceGroup": true,
+    "deployNetworkResourceGroup": true,
+    "deployVirtualNetwork": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
@@ -50,7 +58,8 @@
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Prod",
-    "existingVnetResourceGroup": "rg-network-prod",
+    "vnetAddressPrefix": "10.2.0.0/16",
+    "subnetAddressPrefix": "10.2.0.0/23",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   }
 }

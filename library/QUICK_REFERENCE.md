@@ -4,8 +4,9 @@
 
 ```
 library/
-├── module/                              # Reusable Bicep modules (10 modules)
+├── module/                              # Reusable Bicep modules (11 modules)
 │   ├── resourceGroup.bicep              # Resource Group (subscription scope)
+│   ├── virtualNetwork.bicep             # Virtual Network with Subnet
 │   ├── managedIdentity.bicep            # User-assigned Managed Identity
 │   ├── logAnalyticsWorkspace.bicep      # Log Analytics Workspace
 │   ├── containerRegistry.bicep          # Azure Container Registry (Premium)
@@ -33,6 +34,8 @@ library/
 | Resource | Pattern | Dev Example | UAT Example | Prod Example |
 |----------|---------|-------------|-------------|--------------|
 | Resource Group | `rg-rebc-{env}` | rg-rebc-dev | rg-rebc-uat | rg-rebc-prod |
+| Network Resource Group | `rg-network-{env}` | rg-network-dev | rg-network-uat | rg-network-prod |
+| Virtual Network | `vnet-rebc-{env}` | vnet-rebc-dev | vnet-rebc-uat | vnet-rebc-prod |
 | Managed Identity | `mi-rebc-{env}` | mi-rebc-dev | mi-rebc-uat | mi-rebc-prod |
 | Container Registry | `acraetestrebc{env}` | acraetestrebcdev | acraetestrebcuat | acraetestrebcprod |
 | Container Apps Env | `cae-rebc-{env}` | cae-rebc-dev | cae-rebc-uat | cae-rebc-prod |
@@ -144,6 +147,8 @@ Controls which resources are deployed per environment:
 {
   "dev": {
     "deployResourceGroup": true,
+    "deployNetworkResourceGroup": true,
+    "deployVirtualNetwork": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
@@ -157,7 +162,8 @@ Controls which resources are deployed per environment:
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd!",
-    "existingVnetResourceGroup": "rg-network-dev",
+    "vnetAddressPrefix": "10.0.0.0/16",
+    "subnetAddressPrefix": "10.0.0.0/23",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   }
 }
@@ -251,8 +257,8 @@ Shared configuration:
 **Expected** - Occurs with conditional deployments, safe to ignore
 
 ### Error: "VNet not found"
-- Check `existingVnetResourceGroup` in parameters.json
-- Verify VNet/Subnet exist in subscription
+- Ensure `deployNetworkResourceGroup` and `deployVirtualNetwork` are `true` in parameters.json
+- Verify VNet address prefixes don't conflict
 
 ### Error: "Insufficient permissions"
 - Requires Contributor or Owner role

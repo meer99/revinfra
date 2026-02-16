@@ -23,10 +23,7 @@ This guide provides step-by-step instructions for deploying the REBC infrastruct
 ### Azure Prerequisites
 - Active Azure subscription
 - Appropriate permissions to create resources
-- Existing Virtual Network and Subnet:
-  - VNet: `vnet-rebc`
-  - Subnet: `snet-rebc`
-- Resource group where the VNet resides (configured per environment in `parameters.json`)
+- The Virtual Network and Subnet are created automatically as part of the deployment
 
 ## Configuration
 
@@ -38,11 +35,14 @@ Edit `library/variable/parameters.json` to configure each environment:
 {
   "dev": {
     "deployResourceGroup": true,
+    "deployNetworkResourceGroup": true,
+    "deployVirtualNetwork": true,
     "deployManagedIdentity": true,
     ...
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "YourSecurePassword!",
-    "existingVnetResourceGroup": "rg-network-dev"
+    "vnetAddressPrefix": "10.0.0.0/16",
+    "subnetAddressPrefix": "10.0.0.0/23"
   }
 }
 ```
@@ -252,13 +252,12 @@ If the resource group already exists and you get an error:
 
 #### 2. VNet/Subnet Not Found
 ```
-Error: The Resource 'Microsoft.Network/virtualNetworks/vnet-rebc' under resource group 'rg-network-dev' was not found.
+Error: The Resource 'Microsoft.Network/virtualNetworks/vnet-rebc' was not found.
 ```
 
 **Solution**: 
-- Verify the VNet and Subnet exist
-- Update `existingVnetResourceGroup` in parameters.json
-- Ensure the names in variable.json match your existing resources
+- Ensure `deployNetworkResourceGroup` and `deployVirtualNetwork` are set to `true` in parameters.json
+- Verify the VNet address prefixes don't conflict with existing networks
 
 #### 3. Insufficient Permissions
 ```
