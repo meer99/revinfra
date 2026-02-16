@@ -103,12 +103,9 @@ cd library
 ```
 
 The script will:
-1. Validate your Azure login
-2. Validate the Bicep template
-3. Show a What-If analysis
-4. Ask for confirmation
-5. Deploy the infrastructure
-6. Display deployment outputs
+1. Show a What-If analysis
+2. Ask for confirmation
+3. Deploy the infrastructure
 
 ### Option 2: Manual Deployment
 
