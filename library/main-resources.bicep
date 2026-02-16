@@ -14,8 +14,14 @@ param tags object
 @description('Name patterns for resources')
 param namePatterns object
 
-@description('Subnet resource ID for private endpoints and container apps environment')
-param subnetId string
+@description('VNet name')
+param vnetName string
+
+@description('Subnet name')
+param subnetName string
+
+@description('Existing VNet resource group')
+param existingVnetResourceGroup string
 
 @description('Environment parameters')
 param envParams object
@@ -57,6 +63,17 @@ module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deploy
   ]
 }
 
+// Get reference to existing VNet and Subnet
+resource existingVnet 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
+  name: vnetName
+  scope: resourceGroup(existingVnetResourceGroup)
+}
+
+resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {
+  name: subnetName
+  parent: existingVnet
+}
+
 // 4. Deploy Private Endpoint for Container Registry
 module privateEndpointContainerRegistry 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointContainerRegistry) {
   name: 'deploy-pe-cr-${environment}'
@@ -64,7 +81,7 @@ module privateEndpointContainerRegistry 'module/privateEndpoint.bicep' = if (env
     privateEndpointName: '${namePatterns.privateEndpointContainerRegistry}-${environment}'
     location: location
     tags: tags
-    subnetId: subnetId
+    subnetId: existingSubnet.id
     privateLinkServiceId: containerRegistry.outputs.containerRegistryId
     groupIds: ['registry']
   }
@@ -83,7 +100,7 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     namePattern: namePatterns.containerAppsEnvironment
     logAnalyticsCustomerId: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceCustomerId : ''
     logAnalyticsSharedKey: envParams.deployLogAnalyticsWorkspace ? listKeys(resourceId('Microsoft.OperationalInsights/workspaces', '${namePatterns.logAnalyticsWorkspace}-${environment}'), '2022-10-01').primarySharedKey : ''
-    subnetId: subnetId
+    subnetId: existingSubnet.id
     internal: true
   }
   dependsOn: [
@@ -98,7 +115,7 @@ module privateEndpointContainerAppsEnvironment 'module/privateEndpoint.bicep' = 
     privateEndpointName: '${namePatterns.privateEndpointContainerAppsEnvironment}-${environment}'
     location: location
     tags: tags
-    subnetId: subnetId
+    subnetId: existingSubnet.id
     privateLinkServiceId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
     groupIds: ['managedEnvironments']
   }
@@ -176,7 +193,7 @@ module privateEndpointSqlServer 'module/privateEndpoint.bicep' = if (envParams.d
     privateEndpointName: '${namePatterns.privateEndpointSqlServer}-${environment}'
     location: location
     tags: tags
-    subnetId: subnetId
+    subnetId: existingSubnet.id
     privateLinkServiceId: sqlServer.outputs.sqlServerId
     groupIds: ['sqlServer']
   }

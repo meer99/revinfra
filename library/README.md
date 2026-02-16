@@ -8,7 +8,6 @@ This directory contains modular Bicep templates for deploying Azure infrastructu
 library/
 ├── module/                              # Reusable Bicep modules
 │   ├── resourceGroup.bicep              # Resource Group module
-│   ├── virtualNetwork.bicep             # Virtual Network module
 │   ├── managedIdentity.bicep            # Managed Identity module
 │   ├── containerRegistry.bicep          # Container Registry module (Premium SKU)
 │   ├── containerAppsEnvironment.bicep   # Container Apps Environment module
@@ -47,18 +46,18 @@ library/
 - **SQL Database**: `db-rebc-{env}` (Standard S0, 10 DTUs, 5GB)
 
 ### Network Infrastructure
-- **Network Resource Group**: `rg-network-{env}`
-- **Virtual Network**: `vnet-rebc-{env}` with subnet `snet-rebc`
 - **Private Endpoint - Container Registry**: `pe-cr-{env}`
 - **Private Endpoint - Container Apps Environment**: `pe-cae-{env}`
 - **Private Endpoint - SQL Server**: `pe-sql-{env}`
 
-All private endpoints connect to the subnet `snet-rebc` within the deployed virtual network.
+All private endpoints connect to the existing subnet `snet-rebc` within `vnet-rebc`.
 
 ## Prerequisites
 
 ### Azure Resources (Must Exist)
 - **Subscription**: rebcsubtest
+- **Virtual Network**: vnet-rebc
+- **Subnet**: snet-rebc
 
 ### Tools Required
 - Azure CLI (latest version)
@@ -71,9 +70,9 @@ All private endpoints connect to the subnet `snet-rebc` within the deployed virt
 
 The `parameters.json` file contains configuration for all three environments. Each environment has the following configurable options:
 
-- **Deployment flags**: Control which resources to deploy (including network resources)
+- **Deployment flags**: Control which resources to deploy
 - **SQL credentials**: Administrator login and password
-- **VNet address prefixes**: Address space for the virtual network and subnet
+- **VNet resource group**: Resource group where the existing VNet resides
 - **Container image**: Docker image to use for Container App Jobs
 
 ### Tags
@@ -219,8 +218,8 @@ az deployment sub what-if \
 ### Common Issues
 
 1. **VNet/Subnet Not Found**
-   - Ensure `deployNetworkResourceGroup` and `deployVirtualNetwork` are `true` in parameters.json
-   - Verify VNet address prefixes don't conflict with existing networks
+   - Ensure the VNet and Subnet exist in the subscription
+   - Update `existingVnetResourceGroup` in parameters.json
 
 2. **Deployment Fails on Private Endpoint**
    - Verify the subnet is not used by other services

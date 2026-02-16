@@ -22,7 +22,9 @@ var tags = union(commonTags, {
 // Extract configuration
 var location = variables.location
 var namePatterns = variables.namePatterns
+var vnetName = variables.vnetName
 var subnetName = variables.subnetName
+var existingVnetResourceGroup = envParams.existingVnetResourceGroup
 
 // 1. Deploy Resource Group
 var resourceGroupName = '${namePatterns.resourceGroup}-${environment}'
@@ -37,38 +39,7 @@ module resourceGroup 'module/resourceGroup.bicep' = if (envParams.deployResource
   }
 }
 
-// 2. Deploy Network Resource Group
-var networkResourceGroupName = '${namePatterns.networkResourceGroup}-${environment}'
-
-module networkResourceGroup 'module/resourceGroup.bicep' = if (envParams.deployNetworkResourceGroup) {
-  name: 'deploy-rg-network-${environment}'
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.networkResourceGroup
-  }
-}
-
-// 3. Deploy Virtual Network in the network resource group
-module virtualNetwork 'module/virtualNetwork.bicep' = if (envParams.deployVirtualNetwork) {
-  name: 'deploy-vnet-${environment}'
-  scope: az.resourceGroup(networkResourceGroupName)
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.virtualNetwork
-    subnetName: subnetName
-    vnetAddressPrefix: envParams.vnetAddressPrefix
-    subnetAddressPrefix: envParams.subnetAddressPrefix
-  }
-  dependsOn: [
-    networkResourceGroup
-  ]
-}
-
-// 4. Deploy resources to resource group
+// 2. Deploy resources to resource group
 module resources 'main-resources.bicep' = {
   name: 'deploy-resources-${environment}'
   scope: az.resourceGroup(resourceGroupName)
@@ -77,18 +48,18 @@ module resources 'main-resources.bicep' = {
     location: location
     tags: tags
     namePatterns: namePatterns
-    subnetId: envParams.deployVirtualNetwork ? virtualNetwork.outputs.subnetId : ''
+    vnetName: vnetName
+    subnetName: subnetName
+    existingVnetResourceGroup: existingVnetResourceGroup
     envParams: envParams
   }
   dependsOn: [
     resourceGroup
-    virtualNetwork
   ]
 }
 
 // Outputs
 output resourceGroupName string = envParams.deployResourceGroup ? resourceGroup.outputs.resourceGroupName : resourceGroupName
-output networkResourceGroupName string = envParams.deployNetworkResourceGroup ? networkResourceGroup.outputs.resourceGroupName : networkResourceGroupName
 output managedIdentityId string = envParams.deployManagedIdentity ? resources.outputs.managedIdentityId : ''
 output containerRegistryName string = envParams.deployContainerRegistry ? resources.outputs.containerRegistryName : ''
 output containerRegistryLoginServer string = envParams.deployContainerRegistry ? resources.outputs.containerRegistryLoginServer : ''
