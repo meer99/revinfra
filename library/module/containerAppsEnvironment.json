@@ -1,0 +1,121 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.40.2.10011",
+      "templateHash": "15399582418690744092"
+    }
+  },
+  "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "Environment name (dev, uat, prod)"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "australiaeast",
+      "metadata": {
+        "description": "Azure region for resources"
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Tags to apply to the container apps environment"
+      }
+    },
+    "namePattern": {
+      "type": "string",
+      "defaultValue": "cae-rebc",
+      "metadata": {
+        "description": "Container Apps Environment name pattern"
+      }
+    },
+    "logAnalyticsCustomerId": {
+      "type": "string",
+      "metadata": {
+        "description": "Log Analytics workspace customer ID"
+      }
+    },
+    "logAnalyticsSharedKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Log Analytics workspace shared key"
+      }
+    },
+    "subnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "VNet configuration - Subnet resource ID"
+      }
+    },
+    "internal": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable internal load balancer mode for private access"
+      }
+    }
+  },
+  "variables": {
+    "containerAppsEnvironmentName": "[format('{0}-{1}', parameters('namePattern'), parameters('environment'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.App/managedEnvironments",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('containerAppsEnvironmentName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "appLogsConfiguration": {
+          "destination": "log-analytics",
+          "logAnalyticsConfiguration": {
+            "customerId": "[parameters('logAnalyticsCustomerId')]",
+            "sharedKey": "[parameters('logAnalyticsSharedKey')]"
+          }
+        },
+        "vnetConfiguration": {
+          "internal": "[parameters('internal')]",
+          "infrastructureSubnetId": "[parameters('subnetId')]"
+        },
+        "zoneRedundant": false
+      }
+    }
+  ],
+  "outputs": {
+    "containerAppsEnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the container apps environment"
+      },
+      "value": "[variables('containerAppsEnvironmentName')]"
+    },
+    "containerAppsEnvironmentId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the container apps environment"
+      },
+      "value": "[resourceId('Microsoft.App/managedEnvironments', variables('containerAppsEnvironmentName'))]"
+    },
+    "containerAppsEnvironmentDefaultDomain": {
+      "type": "string",
+      "metadata": {
+        "description": "The default domain of the container apps environment"
+      },
+      "value": "[reference(resourceId('Microsoft.App/managedEnvironments', variables('containerAppsEnvironmentName')), '2023-05-01').defaultDomain]"
+    },
+    "containerAppsEnvironmentStaticIp": {
+      "type": "string",
+      "metadata": {
+        "description": "The static IP address of the container apps environment"
+      },
+      "value": "[reference(resourceId('Microsoft.App/managedEnvironments', variables('containerAppsEnvironmentName')), '2023-05-01').staticIp]"
+    }
+  }
+}
