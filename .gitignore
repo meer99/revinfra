@@ -1,0 +1,26 @@
+# Bicep compiled JSON files
+*.json
+!library/variable/*.json
+!library/parameters.json
+
+# Build artifacts
+**/bin/
+**/obj/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+/tmp/
+.tmp/
