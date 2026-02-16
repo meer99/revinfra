@@ -3,6 +3,7 @@
   "subscriptionName": "Meer-Subscription",
   "vnetName": "vnet-internal",
   "subnetName": "snet-rebc",
+  "subnetCaeName": "snet-rebc-cae",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
     "managedIdentity": "mi-rebc",
