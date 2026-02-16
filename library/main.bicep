@@ -25,6 +25,7 @@ var namePatterns = variables.namePatterns
 var vnetName = variables.vnetName
 var subnetName = variables.subnetName
 var subnetCaeName = variables.subnetCaeName
+var subnetCaeAddressPrefix = variables.subnetCaeAddressPrefix
 var existingVnetResourceGroup = envParams.existingVnetResourceGroup
 
 // 1. Deploy Resource Group
@@ -52,6 +53,7 @@ module resources 'main-resources.bicep' = {
     vnetName: vnetName
     subnetName: subnetName
     subnetCaeName: subnetCaeName
+    subnetCaeAddressPrefix: subnetCaeAddressPrefix
     existingVnetResourceGroup: existingVnetResourceGroup
     envParams: envParams
   }
