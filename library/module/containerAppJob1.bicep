@@ -1,8 +1,8 @@
-// Module: Container App Job
-// Description: Reusable module for creating Container App Jobs
+// Module: Container App Job 1 - Bill Processor
+// Description: Dedicated module for caj-bill-{env}
 
-@description('Job name')
-param jobName string
+@description('Environment name (dev, uat, prod)')
+param environment string
 
 @description('Azure region for resources')
 param location string = 'australiaeast'
@@ -19,33 +19,15 @@ param managedIdentityId string
 @description('Container image (e.g., mcr.microsoft.com/azuredocs/containerapps-helloworld:latest)')
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
-@description('Container name')
-param containerName string = 'main-container'
-
-@description('CPU cores for the container')
-param cpu string = '0.25'
-
-@description('Memory for the container')
-param memory string = '0.5Gi'
-
-@description('Trigger type for the job')
-@allowed(['Manual', 'Schedule', 'Event'])
-param triggerType string = 'Manual'
-
-@description('Cron expression for scheduled jobs (only used when triggerType is Schedule)')
-param cronExpression string = '0 0 * * *'
-
-@description('Replica timeout in seconds')
-param replicaTimeout int = 1800
-
-@description('Replica retry limit')
-param replicaRetryLimit int = 0
-
-@description('Parallelism (number of replicas to start per job execution)')
-param parallelism int = 1
-
-@description('Replica completions')
-param replicaCompletionCount int = 1
+var jobName = 'caj-bill-${environment}'
+var containerName = 'bill-processor'
+var cpu = '0.25'
+var memory = '0.5Gi'
+var triggerType = 'Manual'
+var replicaTimeout = 1800
+var replicaRetryLimit = 0
+var parallelism = 1
+var replicaCompletionCount = 1
 
 resource containerAppJob 'Microsoft.App/jobs@2023-05-01' = {
   name: jobName
@@ -63,15 +45,10 @@ resource containerAppJob 'Microsoft.App/jobs@2023-05-01' = {
       replicaTimeout: replicaTimeout
       replicaRetryLimit: replicaRetryLimit
       triggerType: triggerType
-      manualTriggerConfig: triggerType == 'Manual' ? {
+      manualTriggerConfig: {
         parallelism: parallelism
         replicaCompletionCount: replicaCompletionCount
-      } : null
-      scheduleTriggerConfig: triggerType == 'Schedule' ? {
-        cronExpression: cronExpression
-        parallelism: parallelism
-        replicaCompletionCount: replicaCompletionCount
-      } : null
+      }
     }
     template: {
       containers: [

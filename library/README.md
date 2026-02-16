@@ -11,7 +11,8 @@ library/
 │   ├── managedIdentity.bicep            # Managed Identity module
 │   ├── containerRegistry.bicep          # Container Registry module (Premium SKU)
 │   ├── containerAppsEnvironment.bicep   # Container Apps Environment module
-│   ├── containerAppJob.bicep            # Container App Job module (reusable)
+│   ├── containerAppJob1.bicep           # Container App Job module for caj-bill-{env}
+│   ├── containerAppJob2.bicep           # Container App Job module for caj-data-{env}
 │   ├── sqlServer.bicep                  # SQL Server module
 │   ├── sqlDatabase.bicep                # SQL Database module
 │   ├── privateEndpoint.bicep            # Private Endpoint module (reusable)
