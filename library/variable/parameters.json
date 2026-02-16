@@ -14,7 +14,7 @@
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Dev",
-    "existingVnetResourceGroup": "rg-network-dev",
+    "existingVnetResourceGroup": "rg-net",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "uat": {
@@ -32,7 +32,7 @@
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Uat",
-    "existingVnetResourceGroup": "rg-network-uat",
+    "existingVnetResourceGroup": "rg-net",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "prod": {
@@ -50,7 +50,7 @@
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Prod",
-    "existingVnetResourceGroup": "rg-network-prod",
+    "existingVnetResourceGroup": "rg-net",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   }
 }
