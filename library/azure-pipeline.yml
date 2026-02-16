@@ -11,7 +11,7 @@ trigger:
       - library/**
 
 variables:
-  azureServiceConnection: 'Azure-Service-Connection' # Update with your service connection name
+  azureServiceConnection: 'ado-bcsit' # Update with your service connection name
   location: 'australiaeast'
   vmImageName: 'ubuntu-latest'
 
