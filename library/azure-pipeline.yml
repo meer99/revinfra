@@ -1,5 +1,5 @@
-# Azure DevOps Pipeline for REBC Infrastructure Deployment
-# Multi-stage pipeline for Dev, UAT, and Prod environments
+# Azure DevOps Build Pipeline for REBC Infrastructure
+# Validates Bicep templates and publishes artifacts for Azure DevOps Releases
 
 trigger:
   branches:
@@ -10,248 +10,37 @@ trigger:
     include:
       - library/**
 
+pool:
+  vmImage: 'ubuntu-latest'
+
 variables:
-  azureServiceConnection: 'ado-bcsit' # Update with your service connection name
-  location: 'australiaeast'
-  vmImageName: 'ubuntu-latest'
+  azureServiceConnection: 'ado-bcsit'
 
-stages:
-  # ============================================
-  # Stage 1: Dev Environment
-  # ============================================
-  - stage: Dev
-    displayName: 'Deploy to Dev'
-    jobs:
-      - deployment: DeployDev
-        displayName: 'Deploy Dev Infrastructure'
-        environment: 'dev' # Environment for approval gates
-        pool:
-          vmImage: $(vmImageName)
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                
-                - task: AzureCLI@2
-                  displayName: 'Install Bicep CLI'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az bicep version
-                      az bicep upgrade
-                
-                - task: AzureCLI@2
-                  displayName: 'Validate Bicep Template'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
-                    inlineScript: |
-                      az deployment sub validate \
-                        --location $(location) \
-                        --template-file main.bicep \
-                        --parameters environment=dev
-                
-                - task: AzureCLI@2
-                  displayName: 'Deploy Dev Infrastructure'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: '$(System.DefaultWorkingDirectory)/library/deploy.sh'
-                    arguments: 'dev'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
-                  env:
-                    CONFIRM: 'yes' # Auto-confirm for automated deployment
-                
-                - task: AzureCLI@2
-                  displayName: 'Run Post-Deployment Tests'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      echo "Running post-deployment verification..."
-                      
-                      # Verify resource group exists
-                      RESOURCE_GROUP="rg-rebc-dev"
-                      if az group show --name $RESOURCE_GROUP &> /dev/null; then
-                        echo "✓ Resource group $RESOURCE_GROUP exists"
-                      else
-                        echo "✗ Resource group $RESOURCE_GROUP not found"
-                        exit 1
-                      fi
-                      
-                      echo "✓ Dev deployment verification completed"
+steps:
+  - checkout: self
 
-  # ============================================
-  # Stage 2: UAT Environment
-  # ============================================
-  - stage: UAT
-    displayName: 'Deploy to UAT'
-    dependsOn: Dev
-    condition: succeeded()
-    jobs:
-      - deployment: DeployUAT
-        displayName: 'Deploy UAT Infrastructure'
-        environment: 'uat' # Environment for approval gates
-        pool:
-          vmImage: $(vmImageName)
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                
-                - task: AzureCLI@2
-                  displayName: 'Install Bicep CLI'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az bicep version
-                      az bicep upgrade
-                
-                - task: AzureCLI@2
-                  displayName: 'Validate Bicep Template'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
-                    inlineScript: |
-                      az deployment sub validate \
-                        --location $(location) \
-                        --template-file main.bicep \
-                        --parameters environment=uat
-                
-                - task: AzureCLI@2
-                  displayName: 'Deploy UAT Infrastructure'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: '$(System.DefaultWorkingDirectory)/library/deploy.sh'
-                    arguments: 'uat'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
-                  env:
-                    CONFIRM: 'yes' # Auto-confirm for automated deployment
-                
-                - task: AzureCLI@2
-                  displayName: 'Run Post-Deployment Tests'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      echo "Running post-deployment verification..."
-                      
-                      # Verify resource group exists
-                      RESOURCE_GROUP="rg-rebc-uat"
-                      if az group show --name $RESOURCE_GROUP &> /dev/null; then
-                        echo "✓ Resource group $RESOURCE_GROUP exists"
-                      else
-                        echo "✗ Resource group $RESOURCE_GROUP not found"
-                        exit 1
-                      fi
-                      
-                      echo "✓ UAT deployment verification completed"
+  - script: |
+      az bicep version
+      az bicep build --file main.bicep
+    workingDirectory: 'library'
+    displayName: 'Validate Bicep Templates'
 
-  # ============================================
-  # Stage 3: Prod Environment
-  # ============================================
-  - stage: Prod
-    displayName: 'Deploy to Prod'
-    dependsOn: UAT
-    condition: succeeded()
-    jobs:
-      - deployment: DeployProd
-        displayName: 'Deploy Prod Infrastructure'
-        environment: 'prod' # Environment for approval gates
-        pool:
-          vmImage: $(vmImageName)
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                
-                - task: AzureCLI@2
-                  displayName: 'Install Bicep CLI'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az bicep version
-                      az bicep upgrade
-                
-                - task: AzureCLI@2
-                  displayName: 'Validate Bicep Template'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
-                    inlineScript: |
-                      az deployment sub validate \
-                        --location $(location) \
-                        --template-file main.bicep \
-                        --parameters environment=prod
-                
-                - task: AzureCLI@2
-                  displayName: 'What-If Analysis'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
-                    inlineScript: |
-                      az deployment sub what-if \
-                        --location $(location) \
-                        --template-file main.bicep \
-                        --parameters environment=prod
-                
-                - task: AzureCLI@2
-                  displayName: 'Deploy Prod Infrastructure'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'scriptPath'
-                    scriptPath: '$(System.DefaultWorkingDirectory)/library/deploy.sh'
-                    arguments: 'prod'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/library'
-                  env:
-                    CONFIRM: 'yes' # Auto-confirm for automated deployment
-                
-                - task: AzureCLI@2
-                  displayName: 'Run Post-Deployment Tests'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      echo "Running post-deployment verification..."
-                      
-                      # Verify resource group exists
-                      RESOURCE_GROUP="rg-rebc-prod"
-                      if az group show --name $RESOURCE_GROUP &> /dev/null; then
-                        echo "✓ Resource group $RESOURCE_GROUP exists"
-                      else
-                        echo "✗ Resource group $RESOURCE_GROUP not found"
-                        exit 1
-                      fi
-                      
-                      echo "✓ Prod deployment verification completed"
-                
-                - task: PublishBuildArtifacts@1
-                  displayName: 'Publish Deployment Artifacts'
-                  inputs:
-                    PathtoPublish: '$(System.DefaultWorkingDirectory)/library'
-                    ArtifactName: 'infrastructure-templates'
-                    publishLocation: 'Container'
+  - task: AzureCLI@2
+    displayName: 'Azure Deployment What-If (Dev)'
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/library'
+      inlineScript: |
+        az deployment sub what-if \
+          --location australiaeast \
+          --template-file main.bicep \
+          --parameters environment=dev
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Bicep Library Artifact'
+    inputs:
+      PathtoPublish: 'library'
+      ArtifactName: 'bicep-library'
+      publishLocation: 'Container'
