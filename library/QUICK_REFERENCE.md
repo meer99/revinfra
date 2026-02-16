@@ -4,13 +4,14 @@
 
 ```
 library/
-├── module/                              # Reusable Bicep modules (9 modules)
+├── module/                              # Reusable Bicep modules (10 modules)
 │   ├── resourceGroup.bicep              # Resource Group (subscription scope)
 │   ├── managedIdentity.bicep            # User-assigned Managed Identity
 │   ├── logAnalyticsWorkspace.bicep      # Log Analytics Workspace
 │   ├── containerRegistry.bicep          # Azure Container Registry (Premium)
 │   ├── containerAppsEnvironment.bicep   # Container Apps Environment (internal)
-│   ├── containerAppJob.bicep            # Container App Job (reusable)
+│   ├── containerAppJob1.bicep           # Container App Job for caj-bill-{env}
+│   ├── containerAppJob2.bicep           # Container App Job for caj-data-{env}
 │   ├── sqlServer.bicep                  # Azure SQL Server
 │   ├── sqlDatabase.bicep                # Azure SQL Database
 │   └── privateEndpoint.bicep            # Private Endpoint (reusable)
@@ -206,12 +207,19 @@ Shared configuration:
 - `subnetId` - Subnet resource ID for VNet integration
 - `internal` - Internal-only environment (default: true)
 
-### containerAppJob.bicep
-- `jobName` - Name of the job
+### containerAppJob1.bicep
+- `environment` - Environment name (dev, uat, prod)
 - `containerAppsEnvironmentId` - Container Apps Environment ID
 - `managedIdentityId` - Managed identity resource ID
 - `containerImage` - Docker image to run
-- `triggerType` - Manual, Schedule, or Event (default: Manual)
+- Hardcoded: jobName as `caj-bill-{env}`, containerName as `bill-processor`, CPU 0.25, Memory 0.5Gi, Manual trigger
+
+### containerAppJob2.bicep
+- `environment` - Environment name (dev, uat, prod)
+- `containerAppsEnvironmentId` - Container Apps Environment ID
+- `managedIdentityId` - Managed identity resource ID
+- `containerImage` - Docker image to run
+- Hardcoded: jobName as `caj-data-{env}`, containerName as `data-processor`, CPU 0.25, Memory 0.5Gi, Manual trigger
 
 ### sqlServer.bicep
 - `administratorLogin` - SQL admin username

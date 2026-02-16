@@ -125,16 +125,15 @@ module privateEndpointContainerAppsEnvironment 'module/privateEndpoint.bicep' = 
 }
 
 // 7. Deploy Container App Job - Bill
-module containerAppJobBill 'module/containerAppJob.bicep' = if (envParams.deployContainerAppJobBill) {
+module containerAppJobBill 'module/containerAppJob1.bicep' = if (envParams.deployContainerAppJobBill) {
   name: 'deploy-caj-bill-${environment}'
   params: {
-    jobName: '${namePatterns.containerAppJobBill}-${environment}'
+    environment: environment
     location: location
     tags: tags
     containerAppsEnvironmentId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
     managedIdentityId: managedIdentity.outputs.managedIdentityId
     containerImage: envParams.containerImage
-    containerName: 'bill-processor'
   }
   dependsOn: [
     containerAppsEnvironment
@@ -143,16 +142,15 @@ module containerAppJobBill 'module/containerAppJob.bicep' = if (envParams.deploy
 }
 
 // 8. Deploy Container App Job - Data
-module containerAppJobData 'module/containerAppJob.bicep' = if (envParams.deployContainerAppJobData) {
+module containerAppJobData 'module/containerAppJob2.bicep' = if (envParams.deployContainerAppJobData) {
   name: 'deploy-caj-data-${environment}'
   params: {
-    jobName: '${namePatterns.containerAppJobData}-${environment}'
+    environment: environment
     location: location
     tags: tags
     containerAppsEnvironmentId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
     managedIdentityId: managedIdentity.outputs.managedIdentityId
     containerImage: envParams.containerImage
-    containerName: 'data-processor'
   }
   dependsOn: [
     containerAppsEnvironment
