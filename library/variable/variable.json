@@ -1,7 +1,7 @@
 {
   "location": "australiaeast",
   "subscriptionName": "Meer-Subscription",
-  "vnetName": "vnet-rebc",
+  "vnetName": "vnet-internal",
   "subnetName": "snet-rebc",
   "namePatterns": {
     "resourceGroup": "rg-rebc",

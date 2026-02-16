@@ -157,7 +157,7 @@ Controls which resources are deployed per environment:
     "deployPrivateEndpointSqlServer": true,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd!",
-    "existingVnetResourceGroup": "rg-rebc-dev",
+    "existingVnetResourceGroup": "rg-net",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   }
 }
@@ -184,7 +184,7 @@ Shared configuration:
 {
   "location": "australiaeast",
   "subscriptionName": "rebcsubtest",
-  "vnetName": "vnet-rebc",
+  "vnetName": "vnet-internal",
   "subnetName": "snet-rebc",
   "namePatterns": { ... }
 }

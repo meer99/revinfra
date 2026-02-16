@@ -24,7 +24,8 @@ This guide provides step-by-step instructions for deploying the REBC infrastruct
 - Active Azure subscription
 - Appropriate permissions to create resources
 - Existing Virtual Network and Subnet:
-  - VNet: `vnet-rebc`
+  - Resource Group: `rg-net`
+  - VNet: `vnet-internal`
   - Subnet: `snet-rebc`
 - Resource group where the VNet resides (configured per environment in `parameters.json`)
 
@@ -42,7 +43,7 @@ Edit `library/variable/parameters.json` to configure each environment:
     ...
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "YourSecurePassword!",
-    "existingVnetResourceGroup": "rg-rebc-dev"
+    "existingVnetResourceGroup": "rg-net"
   }
 }
 ```
@@ -252,7 +253,7 @@ If the resource group already exists and you get an error:
 
 #### 2. VNet/Subnet Not Found
 ```
-Error: The Resource 'Microsoft.Network/virtualNetworks/vnet-rebc' under resource group 'rg-rebc-dev' was not found.
+Error: The Resource 'Microsoft.Network/virtualNetworks/vnet-internal' under resource group 'rg-net' was not found.
 ```
 
 **Solution**: 
