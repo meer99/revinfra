@@ -12,6 +12,51 @@ parameters:
       - uat
       - prod
 
+  - name: deployResourceGroup
+    displayName: 'Deploy Resource Group'
+    type: boolean
+    default: false
+
+  - name: deployManagedIdentity
+    displayName: 'Deploy Managed Identity'
+    type: boolean
+    default: false
+
+  - name: deployLogAnalyticsWorkspace
+    displayName: 'Deploy Log Analytics Workspace'
+    type: boolean
+    default: false
+
+  - name: deployContainerRegistry
+    displayName: 'Deploy Container Registry'
+    type: boolean
+    default: false
+
+  - name: deployContainerAppsEnvironment
+    displayName: 'Deploy Container Apps Environment'
+    type: boolean
+    default: false
+
+  - name: deployContainerAppJobBill
+    displayName: 'Deploy Container App Job - Bill'
+    type: boolean
+    default: false
+
+  - name: deployContainerAppJobData
+    displayName: 'Deploy Container App Job - Data'
+    type: boolean
+    default: false
+
+  - name: deploySqlServer
+    displayName: 'Deploy SQL Server'
+    type: boolean
+    default: false
+
+  - name: deploySqlDatabase
+    displayName: 'Deploy SQL Database'
+    type: boolean
+    default: false
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -30,4 +75,14 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'scriptPath'
       scriptPath: 'library/deploy.sh'
-      arguments: '${{ parameters.environment }}'
+      arguments: >-
+        ${{ parameters.environment }}
+        ${{ parameters.deployResourceGroup }}
+        ${{ parameters.deployManagedIdentity }}
+        ${{ parameters.deployLogAnalyticsWorkspace }}
+        ${{ parameters.deployContainerRegistry }}
+        ${{ parameters.deployContainerAppsEnvironment }}
+        ${{ parameters.deployContainerAppJobBill }}
+        ${{ parameters.deployContainerAppJobData }}
+        ${{ parameters.deploySqlServer }}
+        ${{ parameters.deploySqlDatabase }}
