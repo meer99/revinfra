@@ -25,11 +25,13 @@ if [ ! -f "$BICEP_FILE" ]; then
     exit 1
 fi
 
+DEPLOYMENT_NAME="deploy-rebc-${ENVIRONMENT}-${BUILD_BUILDID:-$(date +%Y%m%d-%H%M%S)}"
+
 echo "Deploying to '${ENVIRONMENT}'..."
 az deployment sub create \
     --location australiaeast \
     --template-file "$BICEP_FILE" \
     --parameters environment="$ENVIRONMENT" \
-    --name "deploy-rebc-${ENVIRONMENT}-$(date +%Y%m%d-%H%M%S)"
+    --name "$DEPLOYMENT_NAME"
 
 echo "Deployment complete."
