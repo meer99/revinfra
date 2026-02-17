@@ -16,6 +16,7 @@ library/
 │   ├── sqlServer.bicep                  # SQL Server module
 │   ├── sqlDatabase.bicep                # SQL Database module
 │   ├── privateEndpoint.bicep            # Private Endpoint module (reusable)
+│   ├── subnet.bicep                     # Subnet module (creates subnets in existing VNet)
 │   └── logAnalyticsWorkspace.bicep      # Log Analytics Workspace module
 ├── variable/                            # Configuration files
 │   ├── tags.json                        # Common tags for all resources
@@ -59,8 +60,10 @@ The Container Apps Environment uses a dedicated subnet `snet-rebc-cae` with dele
 - **Subscription**: rebcsubtest
 - **Connectivity Resource Group**: rg-net
 - **Virtual Network**: vnet-internal
-- **Subnet (CAE)**: snet-rebc-cae (dedicated to Container Apps Environment, delegated to `Microsoft.App/environments`)
-- **Subnet (Private Endpoints)**: snet-rebc-pe (used for all private endpoints, no delegation required)
+
+### Managed Subnets (Created by Deployment)
+- **Subnet (CAE)**: `snet-rebc-cae` — `10.0.0.0/27`, delegated to `Microsoft.App/environments`
+- **Subnet (Private Endpoints)**: `snet-rebc-pe` — `10.0.0.32/27`, no delegation
 
 ### Tools Required
 - Azure CLI (latest version)

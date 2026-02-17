@@ -4,6 +4,8 @@
   "vnetName": "vnet-internal",
   "subnetNameCae": "snet-rebc-cae",
   "subnetNamePe": "snet-rebc-pe",
+  "subnetAddressPrefixCae": "10.0.0.0/27",
+  "subnetAddressPrefixPe": "10.0.0.32/27",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
     "managedIdentity": "mi-rebc",
