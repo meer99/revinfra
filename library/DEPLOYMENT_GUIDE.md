@@ -23,11 +23,11 @@ This guide provides step-by-step instructions for deploying the REBC infrastruct
 ### Azure Prerequisites
 - Active Azure subscription
 - Appropriate permissions to create resources
-- Existing Virtual Network and Subnet:
+- Existing Virtual Network and Subnets:
   - Resource Group: `rg-net`
   - VNet: `vnet-internal`
-  - Subnet: `snet-rebc` (/27, used for all connectivity including private endpoints and Container Apps Environment)
-    - The subnet must have delegation configured for `Microsoft.App/environments`
+  - Subnet: `snet-cae` (delegated to `Microsoft.App/environments`, used exclusively by Container Apps Environment)
+  - Subnet: `snet-pe` (used for private endpoints — Container Registry, Container Apps Environment, SQL Server)
 - Resource group where the VNet resides (configured per environment in `parameters.json`)
 
 ## Configuration

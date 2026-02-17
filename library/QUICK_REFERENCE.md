@@ -185,7 +185,8 @@ Shared configuration:
   "location": "australiaeast",
   "subscriptionName": "rebcsubtest",
   "vnetName": "vnet-internal",
-  "subnetName": "snet-rebc",
+  "subnetNameCae": "snet-cae",
+  "subnetNamePe": "snet-pe",
   "namePatterns": { ... }
 }
 ```
