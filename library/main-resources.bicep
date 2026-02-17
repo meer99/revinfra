@@ -92,9 +92,6 @@ module subnetPe 'module/subnet.bicep' = {
     subnetName: subnetNamePe
     addressPrefix: subnetAddressPrefixPe
   }
-  dependsOn: [
-    subnetCae
-  ]
 }
 
 // 4. Deploy Private Endpoint for Container Registry
