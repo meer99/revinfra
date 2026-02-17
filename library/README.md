@@ -57,6 +57,12 @@ All private endpoints use the existing subnet `snet-rebc` (`10.0.0.0/27`) within
 
 ## Deployment
 
+### Azure DevOps (Recommended)
+
+The build pipeline (`azure-pipeline.yml`) validates Bicep templates and publishes artifacts. Environment deployments (Dev, UAT, Prod) are handled by **Azure DevOps Release pipelines**, which consume the published `bicep-library` artifact and call `deploy.sh` with the appropriate environment.
+
+### Manual Deployment
+
 ```bash
 # Deploy to Dev
 ./deploy.sh dev
