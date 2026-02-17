@@ -55,7 +55,7 @@ revinfra/
 - ✅ Multi-environment support (Dev, UAT, Prod)
 - ✅ Private endpoints for secure access
 - ✅ Managed identity for authentication
-- ✅ Automated deployment with Azure DevOps pipeline
+- ✅ Automated deployment with Azure DevOps pipeline (environment selectable via parameter)
 - ✅ Shell script for manual deployment
 - ✅ Comprehensive documentation
 

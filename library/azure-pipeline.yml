@@ -1,5 +1,5 @@
 # Azure DevOps Pipeline for REBC Infrastructure
-# Validates Bicep templates and deploys to Dev, UAT, and Prod environments
+# Validates Bicep templates and deploys to the selected environment
 
 trigger:
   branches:
@@ -10,6 +10,16 @@ trigger:
     include:
       - library/**
 
+parameters:
+  - name: environment
+    displayName: 'Environment'
+    type: string
+    default: dev
+    values:
+      - dev
+      - uat
+      - prod
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -17,165 +27,33 @@ variables:
   azureServiceConnection: 'ado-bcsit'
 
 stages:
-  # Stage 1: Build - Validate and publish artifacts
   - stage: Build
     displayName: 'Build & Validate'
     jobs:
       - job: Validate
-        displayName: 'Validate Bicep Templates'
         steps:
-          - checkout: self
-
           - script: |
               az bicep version
               az bicep build --file main.bicep
             workingDirectory: 'library'
             displayName: 'Validate Bicep Templates'
 
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish Bicep Library Artifact'
-            inputs:
-              PathtoPublish: 'library'
-              ArtifactName: 'bicep-library'
-              publishLocation: 'Container'
-
-  # Stage 2: Dev - Deploy to Dev environment
-  - stage: Dev
-    displayName: 'Deploy to Dev'
+  - stage: Deploy
+    displayName: 'Deploy to ${{ parameters.environment }}'
     dependsOn: Build
     jobs:
-      - deployment: DeployDev
-        displayName: 'Deploy to Dev'
-        environment: 'dev'
+      - deployment: Deploy
+        environment: '${{ parameters.environment }}'
         strategy:
           runOnce:
             deploy:
               steps:
-                - task: DownloadBuildArtifacts@1
-                  displayName: 'Download Bicep Library Artifact'
-                  inputs:
-                    buildType: 'current'
-                    downloadType: 'single'
-                    artifactName: 'bicep-library'
-                    downloadPath: '$(System.ArtifactsDirectory)'
-
+                - checkout: self
                 - task: AzureCLI@2
-                  displayName: 'What-If Analysis (Dev)'
+                  displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
                   inputs:
                     azureSubscription: $(azureServiceConnection)
                     scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.ArtifactsDirectory)/bicep-library'
-                    inlineScript: |
-                      az deployment sub what-if \
-                        --location australiaeast \
-                        --template-file main.bicep \
-                        --parameters environment=dev
-
-                - task: AzureCLI@2
-                  displayName: 'Deploy Infrastructure (Dev)'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.ArtifactsDirectory)/bicep-library'
-                    inlineScript: |
-                      az deployment sub create \
-                        --location australiaeast \
-                        --template-file main.bicep \
-                        --parameters environment=dev \
-                        --name deploy-rebc-dev-$(Build.BuildId)
-
-  # Stage 3: UAT - Deploy to UAT environment (requires approval)
-  - stage: UAT
-    displayName: 'Deploy to UAT'
-    dependsOn: Dev
-    jobs:
-      - deployment: DeployUAT
-        displayName: 'Deploy to UAT'
-        environment: 'uat'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: DownloadBuildArtifacts@1
-                  displayName: 'Download Bicep Library Artifact'
-                  inputs:
-                    buildType: 'current'
-                    downloadType: 'single'
-                    artifactName: 'bicep-library'
-                    downloadPath: '$(System.ArtifactsDirectory)'
-
-                - task: AzureCLI@2
-                  displayName: 'What-If Analysis (UAT)'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.ArtifactsDirectory)/bicep-library'
-                    inlineScript: |
-                      az deployment sub what-if \
-                        --location australiaeast \
-                        --template-file main.bicep \
-                        --parameters environment=uat
-
-                - task: AzureCLI@2
-                  displayName: 'Deploy Infrastructure (UAT)'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.ArtifactsDirectory)/bicep-library'
-                    inlineScript: |
-                      az deployment sub create \
-                        --location australiaeast \
-                        --template-file main.bicep \
-                        --parameters environment=uat \
-                        --name deploy-rebc-uat-$(Build.BuildId)
-
-  # Stage 4: Prod - Deploy to Prod environment (requires approval)
-  - stage: Prod
-    displayName: 'Deploy to Prod'
-    dependsOn: UAT
-    jobs:
-      - deployment: DeployProd
-        displayName: 'Deploy to Prod'
-        environment: 'prod'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: DownloadBuildArtifacts@1
-                  displayName: 'Download Bicep Library Artifact'
-                  inputs:
-                    buildType: 'current'
-                    downloadType: 'single'
-                    artifactName: 'bicep-library'
-                    downloadPath: '$(System.ArtifactsDirectory)'
-
-                - task: AzureCLI@2
-                  displayName: 'What-If Analysis (Prod)'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.ArtifactsDirectory)/bicep-library'
-                    inlineScript: |
-                      az deployment sub what-if \
-                        --location australiaeast \
-                        --template-file main.bicep \
-                        --parameters environment=prod
-
-                - task: AzureCLI@2
-                  displayName: 'Deploy Infrastructure (Prod)'
-                  inputs:
-                    azureSubscription: $(azureServiceConnection)
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    workingDirectory: '$(System.ArtifactsDirectory)/bicep-library'
-                    inlineScript: |
-                      az deployment sub create \
-                        --location australiaeast \
-                        --template-file main.bicep \
-                        --parameters environment=prod \
-                        --name deploy-rebc-prod-$(Build.BuildId)
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'library/deploy.sh'
+                    arguments: '${{ parameters.environment }}'

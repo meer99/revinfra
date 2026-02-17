@@ -57,6 +57,12 @@ All private endpoints use the existing subnet `snet-rebc` (`10.0.0.0/27`) within
 
 ## Deployment
 
+### Azure DevOps Pipeline
+
+The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the selected environment. When running the pipeline, select the target environment (dev, uat, or prod) via the `environment` parameter.
+
+### Manual Deployment
+
 ```bash
 # Deploy to Dev
 ./deploy.sh dev
