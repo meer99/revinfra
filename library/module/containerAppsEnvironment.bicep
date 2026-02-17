@@ -37,6 +37,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
     }
   }
   properties: {
+    publicNetworkAccess: 'Disabled'
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
