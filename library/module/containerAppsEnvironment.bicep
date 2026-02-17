@@ -1,5 +1,5 @@
 // Module: Container Apps Environment
-// Description: Creates a Container Apps Environment without VNet integration.
+// Description: Creates a Container Apps Environment with workload profiles.
 //       Private connectivity is achieved via private endpoints.
 
 @description('Environment name (dev, uat, prod)')
@@ -35,6 +35,12 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
         sharedKey: logAnalyticsSharedKey
       }
     }
+    workloadProfiles: [
+      {
+        name: 'Consumption'
+        workloadProfileType: 'Consumption'
+      }
+    ]
     zoneRedundant: false
   }
 }
