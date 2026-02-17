@@ -35,12 +35,6 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
         sharedKey: logAnalyticsSharedKey
       }
     }
-    workloadProfiles: [
-      {
-        name: 'Consumption'
-        workloadProfileType: 'Consumption'
-      }
-    ]
     zoneRedundant: false
   }
 }
