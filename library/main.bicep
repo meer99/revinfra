@@ -37,7 +37,9 @@ module resourceGroup 'module/resourceGroup.bicep' = if (envParams.deployResource
 }
 
 // 2. Deploy resources to resource group
-module resources 'main-resources.bicep' = {
+var deployResources = envParams.deployManagedIdentity || envParams.deployLogAnalyticsWorkspace || envParams.deployContainerRegistry || envParams.deployContainerAppsEnvironment || envParams.deployContainerAppJobBill || envParams.deployContainerAppJobData || envParams.deploySqlServer || envParams.deploySqlDatabase
+
+module resources 'main-resources.bicep' = if (deployResources) {
   name: 'deploy-resources-${environment}'
   scope: az.resourceGroup(resourceGroupName)
   params: {
@@ -54,9 +56,9 @@ module resources 'main-resources.bicep' = {
 
 // Outputs
 output resourceGroupName string = envParams.deployResourceGroup ? resourceGroup.outputs.resourceGroupName : resourceGroupName
-output managedIdentityId string = envParams.deployManagedIdentity ? resources.outputs.managedIdentityId : ''
-output containerRegistryName string = envParams.deployContainerRegistry ? resources.outputs.containerRegistryName : ''
-output containerRegistryLoginServer string = envParams.deployContainerRegistry ? resources.outputs.containerRegistryLoginServer : ''
-output containerAppsEnvironmentName string = envParams.deployContainerAppsEnvironment ? resources.outputs.containerAppsEnvironmentName : ''
-output sqlServerName string = envParams.deploySqlServer ? resources.outputs.sqlServerName : ''
-output sqlDatabaseName string = envParams.deploySqlDatabase ? resources.outputs.sqlDatabaseName : ''
+output managedIdentityId string = deployResources && envParams.deployManagedIdentity ? resources.outputs.managedIdentityId : ''
+output containerRegistryName string = deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryName : ''
+output containerRegistryLoginServer string = deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryLoginServer : ''
+output containerAppsEnvironmentName string = deployResources && envParams.deployContainerAppsEnvironment ? resources.outputs.containerAppsEnvironmentName : ''
+output sqlServerName string = deployResources && envParams.deploySqlServer ? resources.outputs.sqlServerName : ''
+output sqlDatabaseName string = deployResources && envParams.deploySqlDatabase ? resources.outputs.sqlDatabaseName : ''
