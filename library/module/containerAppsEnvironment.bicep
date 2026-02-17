@@ -1,6 +1,8 @@
 // Module: Container Apps Environment
-// Description: Creates a Container Apps Environment with internal-only access (private)
-// Note: Public access is disabled, private access is enabled
+// Description: Creates a Container Apps Environment with workload profiles (consumption)
+// Note: Deployed without VNet integration to avoid delegated subnet requirement.
+//       Private connectivity is maintained via private endpoints (pe-cae).
+//       This approach uses a single subnet for all private endpoints.
 
 @description('Environment name (dev, uat, prod)')
 param environment string
@@ -21,12 +23,6 @@ param logAnalyticsCustomerId string
 @secure()
 param logAnalyticsSharedKey string
 
-@description('VNet configuration - Subnet resource ID')
-param subnetId string
-
-@description('Enable internal load balancer mode for private access')
-param internal bool = true
-
 var containerAppsEnvironmentName = '${namePattern}-${environment}'
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
@@ -40,10 +36,6 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
         customerId: logAnalyticsCustomerId
         sharedKey: logAnalyticsSharedKey
       }
-    }
-    vnetConfiguration: {
-      internal: internal
-      infrastructureSubnetId: subnetId
     }
     zoneRedundant: false
   }

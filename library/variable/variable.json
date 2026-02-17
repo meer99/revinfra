@@ -2,8 +2,7 @@
   "location": "australiaeast",
   "subscriptionName": "Meer-Subscription",
   "vnetName": "vnet-internal",
-  "subnetNameCae": "snet-cae",
-  "subnetNamePe": "snet-pe",
+  "subnetName": "snet-rebc",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
     "managedIdentity": "mi-rebc",
