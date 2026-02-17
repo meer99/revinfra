@@ -1,6 +1,5 @@
-# Azure DevOps Build Pipeline for REBC Infrastructure
-# Validates Bicep templates and publishes artifacts
-# Deployment to Dev, UAT, and Prod is handled by Azure DevOps Release pipelines
+# Azure DevOps Pipeline for REBC Infrastructure
+# Validates Bicep templates and deploys to the selected environment
 
 trigger:
   branches:
@@ -11,21 +10,50 @@ trigger:
     include:
       - library/**
 
+parameters:
+  - name: environment
+    displayName: 'Environment'
+    type: string
+    default: dev
+    values:
+      - dev
+      - uat
+      - prod
+
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-  - checkout: self
+variables:
+  azureServiceConnection: 'ado-bcsit'
 
-  - script: |
-      az bicep version
-      az bicep build --file main.bicep
-    workingDirectory: 'library'
-    displayName: 'Validate Bicep Templates'
+stages:
+  - stage: Build
+    displayName: 'Build & Validate'
+    jobs:
+      - job: Validate
+        steps:
+          - script: |
+              az bicep version
+              az bicep build --file main.bicep
+            workingDirectory: 'library'
+            displayName: 'Validate Bicep Templates'
 
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Bicep Library Artifact'
-    inputs:
-      PathtoPublish: 'library'
-      ArtifactName: 'bicep-library'
-      publishLocation: 'Container'
+  - stage: Deploy
+    displayName: 'Deploy to ${{ parameters.environment }}'
+    dependsOn: Build
+    jobs:
+      - deployment: Deploy
+        environment: '${{ parameters.environment }}'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    scriptType: 'bash'
+                    scriptLocation: 'scriptPath'
+                    scriptPath: 'library/deploy.sh'
+                    arguments: '${{ parameters.environment }}'

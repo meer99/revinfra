@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Deploy Script for REBC Infrastructure
-# Called by Azure DevOps Release pipeline per environment
+# Called by Azure DevOps pipeline or manually
 # Usage: ./deploy.sh <environment>
 
 set -e
