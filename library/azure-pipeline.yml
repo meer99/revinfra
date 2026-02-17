@@ -38,6 +38,30 @@ stages:
             workingDirectory: 'library'
             displayName: 'Validate Bicep Templates'
 
+          - task: AzureCLI@2
+            displayName: 'Validate Deployment (${{ parameters.environment }})'
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment sub validate \
+                  --location australiaeast \
+                  --template-file library/main.bicep \
+                  --parameters environment=${{ parameters.environment }}
+
+          - task: AzureCLI@2
+            displayName: 'Preview Changes (What-If)'
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment sub what-if \
+                  --location australiaeast \
+                  --template-file library/main.bicep \
+                  --parameters environment=${{ parameters.environment }}
+
   - stage: Deploy
     displayName: 'Deploy to ${{ parameters.environment }}'
     dependsOn: Build

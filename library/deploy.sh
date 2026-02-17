@@ -2,16 +2,22 @@
 
 # Deploy Script for REBC Infrastructure
 # Called by Azure DevOps pipeline or manually
-# Usage: ./deploy.sh <environment>
+# Usage: ./deploy.sh <environment> [--validate-only]
+#   --validate-only  Validate templates and preview changes without deploying
 
 set -e
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 <environment> (dev|uat|prod)"
+    echo "Usage: $0 <environment> (dev|uat|prod) [--validate-only]"
     exit 1
 fi
 
 ENVIRONMENT=$1
+VALIDATE_ONLY=false
+if [ "$2" = "--validate-only" ]; then
+    VALIDATE_ONLY=true
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BICEP_FILE="${SCRIPT_DIR}/main.bicep"
 
@@ -23,6 +29,26 @@ fi
 if [ ! -f "$BICEP_FILE" ]; then
     echo "Error: Bicep file not found at ${BICEP_FILE}"
     exit 1
+fi
+
+# Validate templates against Azure
+echo "Validating templates for '${ENVIRONMENT}'..."
+az deployment sub validate \
+    --location australiaeast \
+    --template-file "$BICEP_FILE" \
+    --parameters environment="$ENVIRONMENT"
+echo "Validation passed."
+
+# Preview changes with what-if
+echo "Previewing changes for '${ENVIRONMENT}'..."
+az deployment sub what-if \
+    --location australiaeast \
+    --template-file "$BICEP_FILE" \
+    --parameters environment="$ENVIRONMENT"
+
+if [ "$VALIDATE_ONLY" = true ]; then
+    echo "Validate-only mode: no deployment performed."
+    exit 0
 fi
 
 DEPLOYMENT_NAME="deploy-rebc-${ENVIRONMENT}-${BUILD_BUILDID:-$(date +%Y%m%d-%H%M%S)}"

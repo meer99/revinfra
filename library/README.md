@@ -59,12 +59,21 @@ All private endpoints use the existing subnet `snet-bcr` (`10.0.0.0/27`) within 
 
 ### Azure DevOps Pipeline
 
-The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the selected environment. When running the pipeline, select the target environment (dev, uat, or prod) via the `environment` parameter.
+The pipeline (`azure-pipeline.yml`) automatically validates and deploys to the selected environment. When running the pipeline, select the target environment (dev, uat, or prod) via the `environment` parameter.
+
+The pipeline runs these stages in order:
+1. **Build & Validate** — Builds Bicep templates, validates them against Azure, and previews changes with what-if.
+2. **Deploy** — Deploys infrastructure to the selected environment.
+
+After making fixes, simply re-run the pipeline. The Build & Validate stage will re-validate templates and preview changes before deployment proceeds.
 
 ### Manual Deployment
 
 ```bash
-# Deploy to Dev
+# Validate only (no deployment) — use after making fixes
+./deploy.sh dev --validate-only
+
+# Deploy to Dev (validates, previews, then deploys)
 ./deploy.sh dev
 
 # Deploy to UAT

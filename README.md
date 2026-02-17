@@ -29,6 +29,10 @@ See the [library/README.md](library/README.md) for complete documentation, deplo
 
 ```bash
 cd library
+
+# Validate only (use after making fixes to verify before deploying)
+./deploy.sh dev --validate-only
+
 ./deploy.sh dev    # Deploy to Dev environment
 ./deploy.sh uat    # Deploy to UAT environment
 ./deploy.sh prod   # Deploy to Prod environment
@@ -56,6 +60,8 @@ revinfra/
 - ✅ Private endpoints for secure access
 - ✅ Managed identity for authentication
 - ✅ Automated deployment with Azure DevOps pipeline (environment selectable via parameter)
+- ✅ Validate-only mode to verify fixes before deploying
+- ✅ What-if preview of changes before deployment
 - ✅ Shell script for manual deployment
 - ✅ Comprehensive documentation
 
