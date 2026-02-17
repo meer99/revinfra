@@ -59,7 +59,9 @@ All private endpoints use the existing subnet `snet-bcr` (`10.0.0.0/27`) within 
 
 ### Azure DevOps Pipeline
 
-The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the selected environment. When running the pipeline, select the target environment (dev, uat, or prod) via the `environment` parameter.
+The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the selected environment. The pipeline uses `trigger: none`, so it must be run manually from Azure DevOps. When running the pipeline, select the target environment (dev, uat, or prod) via the `environment` parameter.
+
+> **Note**: All deployment flags in `parameters.json` are set to `false` by default. Set the required flags to `true` before running the pipeline to deploy specific resources.
 
 ### Manual Deployment
 
