@@ -26,8 +26,8 @@ This guide provides step-by-step instructions for deploying the REBC infrastruct
 - Existing Virtual Network and Subnet:
   - Resource Group: `rg-net`
   - VNet: `vnet-internal`
-  - Subnet for Private Endpoints: `snet-rebc`
-  - Subnet for Container Apps Environment: `snet-rebc-cae` (dedicated, must not be used by other resources)
+  - Subnet: `snet-rebc` (/27, used for all connectivity including private endpoints and Container Apps Environment)
+    - The subnet must have delegation configured for `Microsoft.App/environments`
 - Resource group where the VNet resides (configured per environment in `parameters.json`)
 
 ## Configuration
