@@ -1,8 +1,6 @@
 {
   "location": "australiaeast",
   "subscriptionName": "Meer-Subscription",
-  "vnetName": "vnet-internal",
-  "subnetName": "snet-bcr",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
     "managedIdentity": "mi-rebc",
@@ -12,9 +10,6 @@
     "containerAppJobData": "caj-data",
     "sqlServer": "sql-rebc",
     "sqlDatabase": "db-rebc",
-    "logAnalyticsWorkspace": "log-rebc",
-    "privateEndpointContainerRegistry": "pe-cr",
-    "privateEndpointContainerAppsEnvironment": "pe-cae",
-    "privateEndpointSqlServer": "pe-sql"
+    "logAnalyticsWorkspace": "log-rebc"
   }
 }
