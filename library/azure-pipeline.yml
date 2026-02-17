@@ -1,14 +1,7 @@
 # Azure DevOps Pipeline for REBC Infrastructure
 # Validates Bicep templates and deploys to the selected environment
 
-trigger:
-  branches:
-    include:
-      - main
-      - develop
-  paths:
-    include:
-      - library/**
+trigger: none
 
 parameters:
   - name: environment
