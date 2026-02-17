@@ -100,7 +100,7 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     namePattern: namePatterns.containerAppsEnvironment
     managedIdentityId: managedIdentity.outputs.managedIdentityId
     logAnalyticsCustomerId: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceCustomerId : ''
-    logAnalyticsSharedKey: envParams.deployLogAnalyticsWorkspace ? listKeys(resourceId('Microsoft.OperationalInsights/workspaces', '${namePatterns.logAnalyticsWorkspace}-${environment}'), '2022-10-01').primarySharedKey : ''
+    logAnalyticsSharedKey: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceSharedKey : ''
   }
   dependsOn: [
     logAnalyticsWorkspace
