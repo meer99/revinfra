@@ -9,12 +9,8 @@
     "deployContainerAppJobData": false,
     "deploySqlServer": false,
     "deploySqlDatabase": false,
-    "deployPrivateEndpointContainerRegistry": false,
-    "deployPrivateEndpointContainerAppsEnvironment": false,
-    "deployPrivateEndpointSqlServer": false,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Dev",
-    "existingVnetResourceGroup": "rg-net",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "uat": {
@@ -27,12 +23,8 @@
     "deployContainerAppJobData": false,
     "deploySqlServer": false,
     "deploySqlDatabase": false,
-    "deployPrivateEndpointContainerRegistry": false,
-    "deployPrivateEndpointContainerAppsEnvironment": false,
-    "deployPrivateEndpointSqlServer": false,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Uat",
-    "existingVnetResourceGroup": "rg-net",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "prod": {
@@ -45,12 +37,8 @@
     "deployContainerAppJobData": false,
     "deploySqlServer": false,
     "deploySqlDatabase": false,
-    "deployPrivateEndpointContainerRegistry": false,
-    "deployPrivateEndpointContainerAppsEnvironment": false,
-    "deployPrivateEndpointSqlServer": false,
     "sqlAdministratorLogin": "sqladmin",
     "sqlAdministratorLoginPassword": "P@ssw0rd123!Prod",
-    "existingVnetResourceGroup": "rg-net",
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   }
 }

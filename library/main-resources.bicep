@@ -14,15 +14,6 @@ param tags object
 @description('Name patterns for resources')
 param namePatterns object
 
-@description('VNet name')
-param vnetName string
-
-@description('Subnet name for private endpoints')
-param subnetName string
-
-@description('Existing VNet resource group')
-param existingVnetResourceGroup string
-
 @description('Environment parameters')
 param envParams object
 
@@ -63,34 +54,7 @@ module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deploy
   ]
 }
 
-// Get reference to existing VNet and Subnet
-resource existingVnet 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
-  name: vnetName
-  scope: resourceGroup(existingVnetResourceGroup)
-}
-
-resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {
-  name: subnetName
-  parent: existingVnet
-}
-
-// 4. Deploy Private Endpoint for Container Registry
-module privateEndpointContainerRegistry 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointContainerRegistry) {
-  name: 'deploy-pe-cr-${environment}'
-  params: {
-    privateEndpointName: '${namePatterns.privateEndpointContainerRegistry}-${environment}'
-    location: location
-    tags: tags
-    subnetId: existingSubnet.id
-    privateLinkServiceId: containerRegistry.outputs.containerRegistryId
-    groupIds: ['registry']
-  }
-  dependsOn: [
-    containerRegistry
-  ]
-}
-
-// 5. Deploy Container Apps Environment
+// 4. Deploy Container Apps Environment
 module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (envParams.deployContainerAppsEnvironment) {
   name: 'deploy-cae-${environment}'
   params: {
@@ -108,23 +72,7 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
   ]
 }
 
-// 6. Deploy Private Endpoint for Container Apps Environment
-module privateEndpointContainerAppsEnvironment 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointContainerAppsEnvironment) {
-  name: 'deploy-pe-cae-${environment}'
-  params: {
-    privateEndpointName: '${namePatterns.privateEndpointContainerAppsEnvironment}-${environment}'
-    location: location
-    tags: tags
-    subnetId: existingSubnet.id
-    privateLinkServiceId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
-    groupIds: ['managedEnvironments']
-  }
-  dependsOn: [
-    containerAppsEnvironment
-  ]
-}
-
-// 7. Deploy Container App Job - Bill
+// 5. Deploy Container App Job - Bill
 module containerAppJobBill 'module/containerAppJob1.bicep' = if (envParams.deployContainerAppJobBill) {
   name: 'deploy-caj-bill-${environment}'
   params: {
@@ -141,7 +89,7 @@ module containerAppJobBill 'module/containerAppJob1.bicep' = if (envParams.deplo
   ]
 }
 
-// 8. Deploy Container App Job - Data
+// 6. Deploy Container App Job - Data
 module containerAppJobData 'module/containerAppJob2.bicep' = if (envParams.deployContainerAppJobData) {
   name: 'deploy-caj-data-${environment}'
   params: {
@@ -158,7 +106,7 @@ module containerAppJobData 'module/containerAppJob2.bicep' = if (envParams.deplo
   ]
 }
 
-// 9. Deploy SQL Server
+// 7. Deploy SQL Server
 module sqlServer 'module/sqlServer.bicep' = if (envParams.deploySqlServer) {
   name: 'deploy-sql-${environment}'
   params: {
@@ -171,7 +119,7 @@ module sqlServer 'module/sqlServer.bicep' = if (envParams.deploySqlServer) {
   }
 }
 
-// 10. Deploy SQL Database
+// 8. Deploy SQL Database
 module sqlDatabase 'module/sqlDatabase.bicep' = if (envParams.deploySqlDatabase) {
   name: 'deploy-db-${environment}'
   params: {
@@ -180,22 +128,6 @@ module sqlDatabase 'module/sqlDatabase.bicep' = if (envParams.deploySqlDatabase)
     tags: tags
     namePattern: namePatterns.sqlDatabase
     sqlServerName: sqlServer.outputs.sqlServerName
-  }
-  dependsOn: [
-    sqlServer
-  ]
-}
-
-// 11. Deploy Private Endpoint for SQL Server
-module privateEndpointSqlServer 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSqlServer) {
-  name: 'deploy-pe-sql-${environment}'
-  params: {
-    privateEndpointName: '${namePatterns.privateEndpointSqlServer}-${environment}'
-    location: location
-    tags: tags
-    subnetId: existingSubnet.id
-    privateLinkServiceId: sqlServer.outputs.sqlServerId
-    groupIds: ['sqlServer']
   }
   dependsOn: [
     sqlServer

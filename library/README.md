@@ -15,7 +15,6 @@ library/
 │   ├── containerAppJob2.bicep           # Container App Job module for caj-data-{env}
 │   ├── sqlServer.bicep                  # SQL Server module
 │   ├── sqlDatabase.bicep                # SQL Database module
-│   ├── privateEndpoint.bicep            # Private Endpoint module (reusable)
 │   └── logAnalyticsWorkspace.bicep      # Log Analytics Workspace module
 ├── variable/                            # Configuration files
 │   ├── tags.json                        # Common tags for all resources
@@ -37,19 +36,11 @@ library/
 - **Container App Job - Data**: `caj-data-{env}`
 - **SQL Server**: `sql-rebc-{env}`
 - **SQL Database**: `db-rebc-{env}`
-- **Private Endpoint - Container Registry**: `pe-cr-{env}`
-- **Private Endpoint - Container Apps Environment**: `pe-cae-{env}`
-- **Private Endpoint - SQL Server**: `pe-sql-{env}`
-
-All private endpoints use the existing subnet `snet-bcr` (`10.0.0.0/27`) within `vnet-internal`.
 
 ## Prerequisites
 
 ### Azure Resources (Must Exist)
 - **Subscription**: rebcsubtest
-- **Connectivity Resource Group**: rg-net
-- **Virtual Network**: vnet-internal
-- **Subnet**: snet-bcr (`10.0.0.0/27`, no delegation required)
 
 ### Tools Required
 - Azure CLI (latest version)
