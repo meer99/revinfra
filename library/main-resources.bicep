@@ -17,17 +17,8 @@ param namePatterns object
 @description('VNet name')
 param vnetName string
 
-@description('Subnet name for Container Apps Environment (delegated to Microsoft.App/environments)')
-param subnetNameCae string
-
 @description('Subnet name for private endpoints')
-param subnetNamePe string
-
-@description('Address prefix for the CAE subnet (CIDR notation)')
-param subnetAddressPrefixCae string
-
-@description('Address prefix for the PE subnet (CIDR notation)')
-param subnetAddressPrefixPe string
+param subnetName string
 
 @description('Existing VNet resource group')
 param existingVnetResourceGroup string
@@ -72,26 +63,15 @@ module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deploy
   ]
 }
 
-// Deploy subnets in the existing VNet
-module subnetCae 'module/subnet.bicep' = {
-  name: 'deploy-subnet-cae'
+// Get reference to existing VNet and Subnet
+resource existingVnet 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
+  name: vnetName
   scope: resourceGroup(existingVnetResourceGroup)
-  params: {
-    vnetName: vnetName
-    subnetName: subnetNameCae
-    addressPrefix: subnetAddressPrefixCae
-    delegationServiceName: 'Microsoft.App/environments'
-  }
 }
 
-module subnetPe 'module/subnet.bicep' = {
-  name: 'deploy-subnet-pe'
-  scope: resourceGroup(existingVnetResourceGroup)
-  params: {
-    vnetName: vnetName
-    subnetName: subnetNamePe
-    addressPrefix: subnetAddressPrefixPe
-  }
+resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {
+  name: subnetName
+  parent: existingVnet
 }
 
 // 4. Deploy Private Endpoint for Container Registry
@@ -101,7 +81,7 @@ module privateEndpointContainerRegistry 'module/privateEndpoint.bicep' = if (env
     privateEndpointName: '${namePatterns.privateEndpointContainerRegistry}-${environment}'
     location: location
     tags: tags
-    subnetId: subnetPe.outputs.subnetId
+    subnetId: existingSubnet.id
     privateLinkServiceId: containerRegistry.outputs.containerRegistryId
     groupIds: ['registry']
   }
@@ -120,7 +100,6 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     namePattern: namePatterns.containerAppsEnvironment
     logAnalyticsCustomerId: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceCustomerId : ''
     logAnalyticsSharedKey: envParams.deployLogAnalyticsWorkspace ? listKeys(resourceId('Microsoft.OperationalInsights/workspaces', '${namePatterns.logAnalyticsWorkspace}-${environment}'), '2022-10-01').primarySharedKey : ''
-    infrastructureSubnetId: subnetCae.outputs.subnetId
   }
   dependsOn: [
     logAnalyticsWorkspace
@@ -134,7 +113,7 @@ module privateEndpointContainerAppsEnvironment 'module/privateEndpoint.bicep' = 
     privateEndpointName: '${namePatterns.privateEndpointContainerAppsEnvironment}-${environment}'
     location: location
     tags: tags
-    subnetId: subnetPe.outputs.subnetId
+    subnetId: existingSubnet.id
     privateLinkServiceId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
     groupIds: ['managedEnvironments']
   }
@@ -212,7 +191,7 @@ module privateEndpointSqlServer 'module/privateEndpoint.bicep' = if (envParams.d
     privateEndpointName: '${namePatterns.privateEndpointSqlServer}-${environment}'
     location: location
     tags: tags
-    subnetId: subnetPe.outputs.subnetId
+    subnetId: existingSubnet.id
     privateLinkServiceId: sqlServer.outputs.sqlServerId
     groupIds: ['sqlServer']
   }

@@ -23,10 +23,7 @@ var tags = union(commonTags, {
 var location = variables.location
 var namePatterns = variables.namePatterns
 var vnetName = variables.vnetName
-var subnetNameCae = variables.subnetNameCae
-var subnetNamePe = variables.subnetNamePe
-var subnetAddressPrefixCae = variables.subnetAddressPrefixCae
-var subnetAddressPrefixPe = variables.subnetAddressPrefixPe
+var subnetName = variables.subnetName
 var existingVnetResourceGroup = envParams.existingVnetResourceGroup
 
 // 1. Deploy Resource Group
@@ -52,10 +49,7 @@ module resources 'main-resources.bicep' = {
     tags: tags
     namePatterns: namePatterns
     vnetName: vnetName
-    subnetNameCae: subnetNameCae
-    subnetNamePe: subnetNamePe
-    subnetAddressPrefixCae: subnetAddressPrefixCae
-    subnetAddressPrefixPe: subnetAddressPrefixPe
+    subnetName: subnetName
     existingVnetResourceGroup: existingVnetResourceGroup
     envParams: envParams
   }

@@ -1,7 +1,6 @@
 // Module: Container Apps Environment
-// Description: Creates a Container Apps Environment with VNet integration
-// Note: Requires a dedicated subnet with delegation to Microsoft.App/environments.
-//       This subnet must not be shared with other resources (e.g. private endpoints).
+// Description: Creates a Container Apps Environment without VNet integration.
+//       Private connectivity is achieved via private endpoints.
 
 @description('Environment name (dev, uat, prod)')
 param environment string
@@ -22,12 +21,6 @@ param logAnalyticsCustomerId string
 @secure()
 param logAnalyticsSharedKey string
 
-@description('Subnet resource ID dedicated to the Container Apps Environment (must be delegated to Microsoft.App/environments)')
-param infrastructureSubnetId string
-
-@description('Whether the environment is internal-only (no public ingress)')
-param internal bool = true
-
 var containerAppsEnvironmentName = '${namePattern}-${environment}'
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
@@ -41,10 +34,6 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
         customerId: logAnalyticsCustomerId
         sharedKey: logAnalyticsSharedKey
       }
-    }
-    vnetConfiguration: {
-      internal: internal
-      infrastructureSubnetId: infrastructureSubnetId
     }
     zoneRedundant: false
   }
