@@ -1,8 +1,6 @@
 // Module: Container Apps Environment
-// Description: Creates a Container Apps Environment with workload profiles (consumption)
-// Note: Deployed without VNet integration to avoid delegated subnet requirement.
-//       Private connectivity is maintained via private endpoints (pe-cae).
-//       This approach uses a single subnet for all private endpoints.
+// Description: Creates a Container Apps Environment without VNet integration.
+//       Private connectivity is achieved via private endpoints.
 
 @description('Environment name (dev, uat, prod)')
 param environment string

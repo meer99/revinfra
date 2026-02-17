@@ -17,7 +17,7 @@ param namePatterns object
 @description('VNet name')
 param vnetName string
 
-@description('Subnet name')
+@description('Subnet name for private endpoints')
 param subnetName string
 
 @description('Existing VNet resource group')
