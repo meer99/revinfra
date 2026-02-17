@@ -50,7 +50,8 @@ library/
 - **Private Endpoint - Container Apps Environment**: `pe-cae-{env}`
 - **Private Endpoint - SQL Server**: `pe-sql-{env}`
 
-All private endpoints connect to the existing subnet `snet-rebc` within `vnet-internal`.
+All private endpoints connect to the existing subnet `snet-rebc-pe` within `vnet-internal`.
+The Container Apps Environment uses a dedicated subnet `snet-rebc-cae` with delegation to `Microsoft.App/environments`.
 
 ## Prerequisites
 
@@ -58,7 +59,8 @@ All private endpoints connect to the existing subnet `snet-rebc` within `vnet-in
 - **Subscription**: rebcsubtest
 - **Connectivity Resource Group**: rg-net
 - **Virtual Network**: vnet-internal
-- **Subnet**: snet-rebc (used for private endpoints, no delegation required)
+- **Subnet (CAE)**: snet-rebc-cae (dedicated to Container Apps Environment, delegated to `Microsoft.App/environments`)
+- **Subnet (Private Endpoints)**: snet-rebc-pe (used for all private endpoints, no delegation required)
 
 ### Tools Required
 - Azure CLI (latest version)
@@ -219,18 +221,23 @@ az deployment sub what-if \
 ### Common Issues
 
 1. **VNet/Subnet Not Found**
-   - Ensure the VNet and Subnet exist in the subscription
+   - Ensure the VNet and both subnets (`snet-rebc-cae` and `snet-rebc-pe`) exist in the subscription
    - Update `existingVnetResourceGroup` in parameters.json
 
 2. **Deployment Fails on Private Endpoint**
-   - Verify the subnet is not used by other services
+   - Verify the PE subnet (`snet-rebc-pe`) is not delegated to any service
    - Check that the subnet has enough available IP addresses
 
 3. **Container Apps Environment Deployment Timeout**
    - This resource can take 10-15 minutes to deploy
    - The deployment is asynchronous and will complete eventually
 
-4. **Cannot Push to Container Registry**
+4. **ManagedEnvironmentInvalidNetworkConfiguration**
+   - Ensure the CAE subnet (`snet-rebc-cae`) is delegated to `Microsoft.App/environments`
+   - Ensure the CAE subnet is not shared with any other Azure resources (e.g. private endpoints)
+   - Private endpoints must use a separate subnet (`snet-rebc-pe`)
+
+5. **Cannot Push to Container Registry**
    - Verify you have access to the private endpoint
    - Use `az acr login` with appropriate credentials
 
