@@ -1,5 +1,5 @@
 // Network Resources Module
-// Description: Deploys networking resources (VNet, subnet, and private endpoints) within the network resource group
+// Description: Deploys private endpoints using an existing VNet and subnet from an existing resource group
 // Target Scope: resourceGroup
 
 @description('Environment name (dev, uat, prod)')
@@ -26,20 +26,24 @@ param containerAppsEnvironmentId string
 @description('Resource ID of the SQL server')
 param sqlServerId string
 
-// 1. Deploy Virtual Network with Subnet
-module virtualNetwork 'module/virtualNetwork.bicep' = if (envParams.deployVirtualNetwork) {
-  name: 'deploy-vnt-${environment}'
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.virtualNetwork
-    subnetNamePattern: namePatterns.subnet
-  }
+@description('Name of the existing virtual network')
+param existingVirtualNetworkName string
+
+@description('Name of the existing subnet')
+param existingSubnetName string
+
+// Reference the existing Virtual Network and Subnet
+resource existingVirtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
+  name: existingVirtualNetworkName
 }
 
-// 2. Deploy Private Endpoint for Container Registry
-module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr && envParams.deployVirtualNetwork) {
+resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {
+  parent: existingVirtualNetwork
+  name: existingSubnetName
+}
+
+// 1. Deploy Private Endpoint for Container Registry
+module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr) {
   name: 'deploy-pe-cr-${environment}'
   params: {
     environment: environment
@@ -48,15 +52,12 @@ module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPr
     namePattern: namePatterns.privateEndpointCr
     privateLinkServiceId: containerRegistryId
     groupIds: ['registry']
-    subnetId: virtualNetwork.outputs.subnetId
+    subnetId: existingSubnet.id
   }
-  dependsOn: [
-    virtualNetwork
-  ]
 }
 
-// 3. Deploy Private Endpoint for Container Apps Environment
-module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae && envParams.deployVirtualNetwork) {
+// 2. Deploy Private Endpoint for Container Apps Environment
+module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae) {
   name: 'deploy-pe-cae-${environment}'
   params: {
     environment: environment
@@ -65,15 +66,12 @@ module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployP
     namePattern: namePatterns.privateEndpointCae
     privateLinkServiceId: containerAppsEnvironmentId
     groupIds: ['managedEnvironments']
-    subnetId: virtualNetwork.outputs.subnetId
+    subnetId: existingSubnet.id
   }
-  dependsOn: [
-    virtualNetwork
-  ]
 }
 
-// 4. Deploy Private Endpoint for SQL Server
-module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql && envParams.deployVirtualNetwork) {
+// 3. Deploy Private Endpoint for SQL Server
+module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql) {
   name: 'deploy-pe-sql-${environment}'
   params: {
     environment: environment
@@ -82,16 +80,13 @@ module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployP
     namePattern: namePatterns.privateEndpointSql
     privateLinkServiceId: sqlServerId
     groupIds: ['sqlServer']
-    subnetId: virtualNetwork.outputs.subnetId
+    subnetId: existingSubnet.id
   }
-  dependsOn: [
-    virtualNetwork
-  ]
 }
 
 // Outputs
-output virtualNetworkName string = envParams.deployVirtualNetwork ? virtualNetwork.outputs.virtualNetworkName : ''
-output subnetName string = envParams.deployVirtualNetwork ? virtualNetwork.outputs.subnetName : ''
-output privateEndpointCrName string = envParams.deployPrivateEndpointCr && envParams.deployVirtualNetwork ? privateEndpointCr.outputs.privateEndpointName : ''
-output privateEndpointCaeName string = envParams.deployPrivateEndpointCae && envParams.deployVirtualNetwork ? privateEndpointCae.outputs.privateEndpointName : ''
-output privateEndpointSqlName string = envParams.deployPrivateEndpointSql && envParams.deployVirtualNetwork ? privateEndpointSql.outputs.privateEndpointName : ''
+output virtualNetworkName string = existingVirtualNetwork.name
+output subnetName string = existingSubnet.name
+output privateEndpointCrName string = envParams.deployPrivateEndpointCr ? privateEndpointCr.outputs.privateEndpointName : ''
+output privateEndpointCaeName string = envParams.deployPrivateEndpointCae ? privateEndpointCae.outputs.privateEndpointName : ''
+output privateEndpointSqlName string = envParams.deployPrivateEndpointSql ? privateEndpointSql.outputs.privateEndpointName : ''

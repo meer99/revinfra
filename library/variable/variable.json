@@ -1,6 +1,9 @@
 {
   "location": "australiaeast",
   "subscriptionName": "Meer-Subscription",
+  "existingNetworkResourceGroup": "rg-net-rebc",
+  "existingVirtualNetwork": "vnt-rebc",
+  "existingSubnet": "snet-rebc",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
     "networkResourceGroup": "rg-net-rebc",
@@ -12,8 +15,6 @@
     "sqlServer": "sql-rebc",
     "sqlDatabase": "db-rebc",
     "logAnalyticsWorkspace": "log-rebc",
-    "virtualNetwork": "vnt-rebc",
-    "subnet": "snet-rebc",
     "privateEndpointCr": "pe-cr",
     "privateEndpointCae": "pe-cae",
     "privateEndpointSql": "pe-sql"
