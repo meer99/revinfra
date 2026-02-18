@@ -22,6 +22,9 @@ var tags = union(commonTags, {
 // Extract configuration
 var location = variables.location
 var namePatterns = variables.namePatterns
+var existingNetworkResourceGroup = variables.existingNetworkResourceGroup
+var existingVirtualNetwork = variables.existingVirtualNetwork
+var existingSubnet = variables.existingSubnet
 
 // 1. Deploy Resource Group
 var resourceGroupName = '${namePatterns.resourceGroup}-${environment}'
@@ -67,12 +70,12 @@ module resources 'main-resources.bicep' = if (deployResources) {
   ]
 }
 
-// 4. Deploy network resources (VNet, subnet, private endpoints) to network resource group
-var deployNetworkResources = envParams.deployVirtualNetwork || envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
+// 4. Deploy private endpoints to the existing network resource group
+var deployNetworkResources = envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
 
 module networkResources 'main-network-resources.bicep' = if (deployNetworkResources) {
   name: 'deploy-network-resources-${environment}'
-  scope: az.resourceGroup(networkResourceGroupName)
+  scope: az.resourceGroup(existingNetworkResourceGroup)
   params: {
     environment: environment
     location: location
@@ -82,9 +85,10 @@ module networkResources 'main-network-resources.bicep' = if (deployNetworkResour
     containerRegistryId: deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryId : ''
     containerAppsEnvironmentId: deployResources && envParams.deployContainerAppsEnvironment ? resources.outputs.containerAppsEnvironmentId : ''
     sqlServerId: deployResources && envParams.deploySqlServer ? resources.outputs.sqlServerId : ''
+    existingVirtualNetworkName: existingVirtualNetwork
+    existingSubnetName: existingSubnet
   }
   dependsOn: [
-    networkResourceGroup
     resources
   ]
 }
@@ -98,7 +102,7 @@ output containerRegistryLoginServer string = deployResources && envParams.deploy
 output containerAppsEnvironmentName string = deployResources && envParams.deployContainerAppsEnvironment ? resources.outputs.containerAppsEnvironmentName : ''
 output sqlServerName string = deployResources && envParams.deploySqlServer ? resources.outputs.sqlServerName : ''
 output sqlDatabaseName string = deployResources && envParams.deploySqlDatabase ? resources.outputs.sqlDatabaseName : ''
-output virtualNetworkName string = deployNetworkResources && envParams.deployVirtualNetwork ? networkResources.outputs.virtualNetworkName : ''
+output virtualNetworkName string = deployNetworkResources ? networkResources.outputs.virtualNetworkName : ''
 output privateEndpointCrName string = deployNetworkResources && envParams.deployPrivateEndpointCr ? networkResources.outputs.privateEndpointCrName : ''
 output privateEndpointCaeName string = deployNetworkResources && envParams.deployPrivateEndpointCae ? networkResources.outputs.privateEndpointCaeName : ''
 output privateEndpointSqlName string = deployNetworkResources && envParams.deployPrivateEndpointSql ? networkResources.outputs.privateEndpointSqlName : ''
