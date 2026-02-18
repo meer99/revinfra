@@ -6,6 +6,8 @@ This guide explains the step-by-step process for migrating Azure resources that 
 
 The goal is to bring 13 existing Azure resources under Bicep management so that all future changes are made through code, not the portal. The Bicep templates will be configured to match the current state of the resources exactly.
 
+> **Note:** The current Bicep modules do not manage private endpoints. If your ClickOps resources have private endpoints configured, those will remain as-is and are not affected by the Bicep deployment. Additional modules would need to be added in the future to manage private endpoints through code.
+
 ## Prerequisites
 
 ### Tools Required
@@ -125,6 +127,8 @@ Before deploying, run a **what-if** operation. This shows what Bicep *would* do 
 ```bash
 cd library
 
+# The Bicep templates load configuration from variable/*.json via loadJsonContent().
+# The only external parameter needed is the environment name.
 az deployment sub what-if \
     --location australiaeast \
     --template-file main.bicep \
@@ -185,7 +189,7 @@ This makes it safe to "adopt" existing ClickOps resources into Bicep management 
 - **Always run `what-if` before deploying** to verify no unintended changes
 - **Deploy to Dev first**, validate, then move to UAT and Prod
 - **SQL passwords** in `parameters.json` must match the existing SQL Server credentials; otherwise the deployment will attempt to update them
-- **Private endpoints** are not created by the Bicep modules currently — they rely on the existing private endpoint configuration in the portal. If private endpoints need to be managed by Bicep in the future, additional modules would need to be added
+- **Private endpoints** are not managed by the current Bicep modules (see the note in the Overview section). Existing private endpoints in the portal are left untouched by the deployment
 - **Do not change resource names** in the configuration — they must match exactly to adopt the existing resources
 
 ## Summary
