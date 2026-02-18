@@ -16,7 +16,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  azureServiceConnection: 'ado-rebc'
+  azureServiceConnection: 'ado-bcsit'
 
 steps:
   - script: az bicep build --file main.bicep
