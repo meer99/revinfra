@@ -39,7 +39,7 @@ module virtualNetwork 'module/virtualNetwork.bicep' = if (envParams.deployVirtua
 }
 
 // 2. Deploy Private Endpoint for Container Registry
-module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr) {
+module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr && envParams.deployVirtualNetwork) {
   name: 'deploy-pe-cr-${environment}'
   params: {
     environment: environment
@@ -56,7 +56,7 @@ module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPr
 }
 
 // 3. Deploy Private Endpoint for Container Apps Environment
-module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae) {
+module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae && envParams.deployVirtualNetwork) {
   name: 'deploy-pe-cae-${environment}'
   params: {
     environment: environment
@@ -73,7 +73,7 @@ module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployP
 }
 
 // 4. Deploy Private Endpoint for SQL Server
-module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql) {
+module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql && envParams.deployVirtualNetwork) {
   name: 'deploy-pe-sql-${environment}'
   params: {
     environment: environment
@@ -92,6 +92,6 @@ module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployP
 // Outputs
 output virtualNetworkName string = envParams.deployVirtualNetwork ? virtualNetwork.outputs.virtualNetworkName : ''
 output subnetName string = envParams.deployVirtualNetwork ? virtualNetwork.outputs.subnetName : ''
-output privateEndpointCrName string = envParams.deployPrivateEndpointCr ? privateEndpointCr.outputs.privateEndpointName : ''
-output privateEndpointCaeName string = envParams.deployPrivateEndpointCae ? privateEndpointCae.outputs.privateEndpointName : ''
-output privateEndpointSqlName string = envParams.deployPrivateEndpointSql ? privateEndpointSql.outputs.privateEndpointName : ''
+output privateEndpointCrName string = envParams.deployPrivateEndpointCr && envParams.deployVirtualNetwork ? privateEndpointCr.outputs.privateEndpointName : ''
+output privateEndpointCaeName string = envParams.deployPrivateEndpointCae && envParams.deployVirtualNetwork ? privateEndpointCae.outputs.privateEndpointName : ''
+output privateEndpointSqlName string = envParams.deployPrivateEndpointSql && envParams.deployVirtualNetwork ? privateEndpointSql.outputs.privateEndpointName : ''
