@@ -1,6 +1,6 @@
 // Module: Container Registry
-// Description: Creates an Azure Container Registry with Premium SKU for private endpoint support
-// Note: Public access is disabled, private access is enabled
+// Description: Creates an Azure Container Registry with Premium SKU
+// Note: Public access is enabled to allow Azure Portal and CI/CD access
 
 @description('Environment name (dev, uat, prod)')
 param environment string
@@ -42,7 +42,7 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' =
   }
   properties: {
     adminUserEnabled: adminUserEnabled
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Enabled'
     networkRuleBypassOptions: 'AzureServices'
     zoneRedundancy: 'Disabled'
     dataEndpointEnabled: false
