@@ -36,7 +36,20 @@ module resourceGroup 'module/resourceGroup.bicep' = if (envParams.deployResource
   }
 }
 
-// 2. Deploy resources to resource group
+// 2. Deploy Network Resource Group
+var networkResourceGroupName = '${namePatterns.networkResourceGroup}-${environment}'
+
+module networkResourceGroup 'module/resourceGroup.bicep' = if (envParams.deployNetworkResourceGroup) {
+  name: 'deploy-rg-net-${environment}'
+  params: {
+    environment: environment
+    location: location
+    tags: tags
+    namePattern: namePatterns.networkResourceGroup
+  }
+}
+
+// 3. Deploy resources to resource group
 var deployResources = envParams.deployManagedIdentity || envParams.deployLogAnalyticsWorkspace || envParams.deployContainerRegistry || envParams.deployContainerAppsEnvironment || envParams.deployContainerAppJobBill || envParams.deployContainerAppJobData || envParams.deploySqlServer || envParams.deploySqlDatabase
 
 module resources 'main-resources.bicep' = if (deployResources) {
@@ -54,11 +67,38 @@ module resources 'main-resources.bicep' = if (deployResources) {
   ]
 }
 
+// 4. Deploy network resources (VNet, subnet, private endpoints) to network resource group
+var deployNetworkResources = envParams.deployVirtualNetwork || envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
+
+module networkResources 'main-network-resources.bicep' = if (deployNetworkResources) {
+  name: 'deploy-network-resources-${environment}'
+  scope: az.resourceGroup(networkResourceGroupName)
+  params: {
+    environment: environment
+    location: location
+    tags: tags
+    namePatterns: namePatterns
+    envParams: envParams
+    containerRegistryId: deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryId : ''
+    containerAppsEnvironmentId: deployResources && envParams.deployContainerAppsEnvironment ? resources.outputs.containerAppsEnvironmentId : ''
+    sqlServerId: deployResources && envParams.deploySqlServer ? resources.outputs.sqlServerId : ''
+  }
+  dependsOn: [
+    networkResourceGroup
+    resources
+  ]
+}
+
 // Outputs
 output resourceGroupName string = envParams.deployResourceGroup ? resourceGroup.outputs.resourceGroupName : resourceGroupName
+output networkResourceGroupName string = envParams.deployNetworkResourceGroup ? networkResourceGroup.outputs.resourceGroupName : networkResourceGroupName
 output managedIdentityId string = deployResources && envParams.deployManagedIdentity ? resources.outputs.managedIdentityId : ''
 output containerRegistryName string = deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryName : ''
 output containerRegistryLoginServer string = deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryLoginServer : ''
 output containerAppsEnvironmentName string = deployResources && envParams.deployContainerAppsEnvironment ? resources.outputs.containerAppsEnvironmentName : ''
 output sqlServerName string = deployResources && envParams.deploySqlServer ? resources.outputs.sqlServerName : ''
 output sqlDatabaseName string = deployResources && envParams.deploySqlDatabase ? resources.outputs.sqlDatabaseName : ''
+output virtualNetworkName string = deployNetworkResources && envParams.deployVirtualNetwork ? networkResources.outputs.virtualNetworkName : ''
+output privateEndpointCrName string = deployNetworkResources && envParams.deployPrivateEndpointCr ? networkResources.outputs.privateEndpointCrName : ''
+output privateEndpointCaeName string = deployNetworkResources && envParams.deployPrivateEndpointCae ? networkResources.outputs.privateEndpointCaeName : ''
+output privateEndpointSqlName string = deployNetworkResources && envParams.deployPrivateEndpointSql ? networkResources.outputs.privateEndpointSqlName : ''

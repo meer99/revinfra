@@ -3,6 +3,7 @@
   "subscriptionName": "Meer-Subscription",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
+    "networkResourceGroup": "rg-net-rebc",
     "managedIdentity": "mi-rebc",
     "containerRegistry": "acraetestrebc",
     "containerAppsEnvironment": "cae-rebc",
@@ -10,6 +11,11 @@
     "containerAppJobData": "caj-data",
     "sqlServer": "sql-rebc",
     "sqlDatabase": "db-rebc",
-    "logAnalyticsWorkspace": "log-rebc"
+    "logAnalyticsWorkspace": "log-rebc",
+    "virtualNetwork": "vnt-rebc",
+    "subnet": "snet-rebc",
+    "privateEndpointCr": "pe-cr",
+    "privateEndpointCae": "pe-cae",
+    "privateEndpointSql": "pe-sql"
   }
 }
