@@ -59,6 +59,10 @@ revinfra/
 - ✅ Shell script for manual deployment
 - ✅ Comprehensive documentation
 
+## Migrating from ClickOps
+
+If you have existing resources deployed through the Azure Portal and want to bring them under Bicep management, see the [Migration Guide](library/MIGRATION_GUIDE.md).
+
 ## Contributing
 
 This is an infrastructure-as-code repository. All changes should be:

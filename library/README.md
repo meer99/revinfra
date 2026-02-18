@@ -67,6 +67,10 @@ The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the
 ./deploy.sh prod
 ```
 
+## Migrating from ClickOps to Bicep
+
+If you have existing resources deployed via the Azure Portal (ClickOps) and want to bring them under Bicep management, see the [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for the complete step-by-step process.
+
 ## Support
 
 For issues or questions, please contact the Infrastructure Team.
