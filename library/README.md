@@ -29,7 +29,7 @@ library/
 
 - **Resource Group**: `rg-ae-bcrev-{env}`
 - **Managed Identity**: `mi-ae-bcrevdata-{env}`
-- **Log Analytics Workspace**: `la-ae-bcrevdata-{env}`
+- **Log Analytics Workspace**: `log-ae-bcrevdata-{env}`
 - **Container Registry**: `acraebcrev{env}` (Premium SKU)
 - **Container Apps Environment**: `cae-ae-bcrev-{env}`
 - **Container App Job - Bill**: `caj-ae-bcrevdata-accsync-{env}`
