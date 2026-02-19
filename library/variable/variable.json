@@ -1,9 +1,9 @@
 {
   "location": "australiaeast",
   "subscriptionName": "Meer-Subscription",
-  "existingNetworkResourceGroup": "rg-net-rebc",
-  "existingVirtualNetwork": "vnt-rebc",
-  "existingSubnet": "snet-rebc",
+  "networkResourceGroup": "rg-net-rebc",
+  "virtualNetwork": "vnt-rebc",
+  "subnet": "snet-rebc",
   "namePatterns": {
     "resourceGroup": "rg-rebc",
     "networkResourceGroup": "rg-net-rebc",
