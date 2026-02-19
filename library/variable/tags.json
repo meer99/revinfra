@@ -1,6 +1,11 @@
 {
-  "Project": "REBC",
-  "ManagedBy": "Infrastructure Team",
-  "CostCenter": "IT-001",
-  "Department": "Infrastructure"
+  "ApplicationName": "StrategicBilling",
+  "Approver": "Andrew.Harvey1@ucareqld.com.au",
+  "BusinessOwner": "BlueCare",
+  "BusinessUnit": "Digital Platforms"
+  "CostCenter": "123024",
+  "Environment": "Dev1",
+  "ProjectCode": "PJ201372-0002",
+  "ProjectName": "bcrev"
+  "TechnicalOwner": "conor.wilson@ucareqld.com.au"
 }
