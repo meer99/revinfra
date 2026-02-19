@@ -26,7 +26,7 @@ param logAnalyticsSharedKey string
 
 var containerAppsEnvironmentName = '${namePattern}-${environment}'
 
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-10-02-preview' = {
   name: containerAppsEnvironmentName
   location: location
   tags: tags
