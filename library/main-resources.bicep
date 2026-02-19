@@ -2,7 +2,7 @@
 // Description: Deploys all resources within the resource group
 // Target Scope: resourceGroup
 
-@description('Environment name (dev1, uat, prod)')
+@description('Environment name (dev1, sit, uat, prod)')
 param environment string
 
 @description('Azure region for resources')
