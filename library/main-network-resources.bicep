@@ -32,9 +32,13 @@ param existingVirtualNetworkName string
 @description('Name of the existing subnet')
 param existingSubnetName string
 
-// Reference the existing Virtual Network and Subnet
+@description('Name of the existing network resource group containing the VNet')
+param existingNetworkResourceGroupName string
+
+// Reference the existing Virtual Network and Subnet from the network resource group
 resource existingVirtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
   name: existingVirtualNetworkName
+  scope: resourceGroup(existingNetworkResourceGroupName)
 }
 
 resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {

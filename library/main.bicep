@@ -70,12 +70,12 @@ module resources 'main-resources.bicep' = if (deployResources) {
   ]
 }
 
-// 4. Deploy private endpoints to the existing network resource group
+// 4. Deploy private endpoints to the application resource group (using existing VNet/subnet from network resource group)
 var deployNetworkResources = envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
 
 module networkResources 'main-network-resources.bicep' = if (deployNetworkResources) {
   name: 'deploy-network-resources-${environment}'
-  scope: az.resourceGroup(existingNetworkResourceGroup)
+  scope: az.resourceGroup(resourceGroupName)
   params: {
     environment: environment
     location: location
@@ -87,6 +87,7 @@ module networkResources 'main-network-resources.bicep' = if (deployNetworkResour
     sqlServerId: deployResources && envParams.deploySqlServer ? resources.outputs.sqlServerId : ''
     existingVirtualNetworkName: existingVirtualNetwork
     existingSubnetName: existingSubnet
+    existingNetworkResourceGroupName: existingNetworkResourceGroup
   }
   dependsOn: [
     resources
