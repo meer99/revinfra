@@ -1,7 +1,7 @@
 // Module: SQL Server
 // Description: Creates an Azure SQL Server with public access disabled
 
-@description('Environment name (dev, uat, prod)')
+@description('Environment name (dev1, uat, prod)')
 param environment string
 
 @description('Azure region for resources')

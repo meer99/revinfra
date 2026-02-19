@@ -1,7 +1,7 @@
 // Module: Log Analytics Workspace
 // Description: Creates a Log Analytics workspace for monitoring
 
-@description('Environment name (dev, uat, prod)')
+@description('Environment name (dev1, uat, prod)')
 param environment string
 
 @description('Azure region for resources')

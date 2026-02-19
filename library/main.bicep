@@ -4,8 +4,8 @@
 
 targetScope = 'subscription'
 
-@description('Environment name (dev, uat, prod)')
-@allowed(['dev', 'uat', 'prod'])
+@description('Environment name (dev1, uat, prod)')
+@allowed(['dev1', 'uat', 'prod'])
 param environment string
 
 // Load configuration files

@@ -6,9 +6,9 @@ parameters:
   - name: environment
     displayName: 'Environment'
     type: string
-    default: dev
+    default: dev1
     values:
-      - dev
+      - dev1
       - uat
       - prod
 

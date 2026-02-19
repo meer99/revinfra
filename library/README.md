@@ -1,6 +1,6 @@
 # REBC Infrastructure Library
 
-This directory contains modular Bicep templates for deploying Azure infrastructure across multiple environments (Dev, UAT, Prod).
+This directory contains modular Bicep templates for deploying Azure infrastructure across multiple environments (Dev1, UAT, Prod).
 
 ## Directory Structure
 
@@ -50,15 +50,15 @@ library/
 
 ### Azure DevOps Pipeline
 
-The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the selected environment. The pipeline uses `trigger: none`, so it must be run manually from Azure DevOps. When running the pipeline, select the target environment (dev, uat, or prod) via the `environment` parameter.
+The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the selected environment. The pipeline uses `trigger: none`, so it must be run manually from Azure DevOps. When running the pipeline, select the target environment (dev1, uat, or prod) via the `environment` parameter.
 
 > **Note**: All deployment flags in `parameters.json` are set to `false` by default. Set the required flags to `true` before running the pipeline to deploy specific resources.
 
 ### Manual Deployment
 
 ```bash
-# Deploy to Dev
-./deploy.sh dev
+# Deploy to Dev1
+./deploy.sh dev1
 
 # Deploy to UAT
 ./deploy.sh uat

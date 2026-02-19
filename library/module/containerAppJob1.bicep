@@ -1,7 +1,7 @@
 // Module: Container App Job 1 - Bill Processor
 // Description: Dedicated module for caj-bill-{env}
 
-@description('Environment name (dev, uat, prod)')
+@description('Environment name (dev1, uat, prod)')
 param environment string
 
 @description('Azure region for resources')
