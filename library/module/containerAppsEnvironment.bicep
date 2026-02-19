@@ -14,9 +14,6 @@ param tags object = {}
 @description('Container Apps Environment name pattern')
 param namePattern string = 'cae-rebc'
 
-@description('Managed identity resource ID')
-param managedIdentityId string
-
 @description('Log Analytics workspace customer ID')
 param logAnalyticsCustomerId string
 
@@ -30,12 +27,6 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
   name: containerAppsEnvironmentName
   location: location
   tags: tags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
   properties: {
     appLogsConfiguration: {
       destination: 'log-analytics'
