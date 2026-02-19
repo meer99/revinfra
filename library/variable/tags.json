@@ -2,10 +2,10 @@
   "ApplicationName": "StrategicBilling",
   "Approver": "Andrew.Harvey1@ucareqld.com.au",
   "BusinessOwner": "BlueCare",
-  "BusinessUnit": "Digital Platforms"
+  "BusinessUnit": "Digital Platforms",
   "CostCenter": "123024",
   "Environment": "Dev1",
   "ProjectCode": "PJ201372-0002",
-  "ProjectName": "bcrev"
+  "ProjectName": "bcrev",
   "TechnicalOwner": "conor.wilson@ucareqld.com.au"
 }
