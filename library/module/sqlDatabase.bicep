@@ -1,7 +1,7 @@
 // Module: SQL Database
 // Description: Creates an Azure SQL Database with specified service tier and DTUs
 
-@description('Environment name (dev1, uat, prod)')
+@description('Environment name (dev1, sit, uat, prod)')
 param environment string
 
 @description('Azure region for resources')

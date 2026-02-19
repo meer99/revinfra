@@ -2,7 +2,7 @@
 // Description: Creates a Container Apps Environment with workload profiles.
 //       Private connectivity is achieved via private endpoints.
 
-@description('Environment name (dev1, uat, prod)')
+@description('Environment name (dev1, sit, uat, prod)')
 param environment string
 
 @description('Azure region for resources')

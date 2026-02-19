@@ -2,7 +2,7 @@
 // Description: Creates an Azure Container Registry with Premium SKU for private endpoint support
 // Note: Public access is disabled, private access is enabled
 
-@description('Environment name (dev1, uat, prod)')
+@description('Environment name (dev1, sit, uat, prod)')
 param environment string
 
 @description('Azure region for resources')

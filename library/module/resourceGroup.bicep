@@ -4,7 +4,7 @@
 
 targetScope = 'subscription'
 
-@description('Environment name (dev1, uat, prod)')
+@description('Environment name (dev1, sit, uat, prod)')
 param environment string
 
 @description('Azure region for resources')
