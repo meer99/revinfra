@@ -16,7 +16,7 @@ parameters:
   - name: confirmDeploy
     displayName: 'Confirm deployment (must be true to deploy)'
     type: boolean
-    default: true
+    default: false
 
 pool:
   vmImage: 'ubuntu-latest'
