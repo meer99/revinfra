@@ -9,6 +9,7 @@ parameters:
     default: dev1
     values:
       - dev1
+      - sit
       - uat
       - prod
 
