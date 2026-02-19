@@ -11,8 +11,8 @@ library/
 │   ├── managedIdentity.bicep            # Managed Identity module
 │   ├── containerRegistry.bicep          # Container Registry module (Premium SKU)
 │   ├── containerAppsEnvironment.bicep   # Container Apps Environment module
-│   ├── containerAppJob1.bicep           # Container App Job module for caj-bill-{env}
-│   ├── containerAppJob2.bicep           # Container App Job module for caj-data-{env}
+│   ├── containerAppJob1.bicep           # Container App Job module for caj-ae-bcrevdata-accsync-{env}
+│   ├── containerAppJob2.bicep           # Container App Job module for caj-ae-bcrevproc-sah-cb-{env}
 │   ├── sqlServer.bicep                  # SQL Server module
 │   ├── sqlDatabase.bicep                # SQL Database module
 │   └── logAnalyticsWorkspace.bicep      # Log Analytics Workspace module
@@ -27,15 +27,15 @@ library/
 
 ## Resources Deployed
 
-- **Resource Group**: `rg-rebc-{env}`
-- **Managed Identity**: `mi-rebc-{env}`
-- **Log Analytics Workspace**: `log-rebc-{env}`
-- **Container Registry**: `acraetestrebc{env}` (Premium SKU)
-- **Container Apps Environment**: `cae-rebc-{env}`
-- **Container App Job - Bill**: `caj-bill-{env}`
-- **Container App Job - Data**: `caj-data-{env}`
-- **SQL Server**: `sql-rebc-{env}`
-- **SQL Database**: `db-rebc-{env}`
+- **Resource Group**: `rg-ae-bcrev-{env}`
+- **Managed Identity**: `mi-ae-bcrevdata-{env}`
+- **Log Analytics Workspace**: `la-ae-bcrevdata-{env}`
+- **Container Registry**: `acraebcrev{env}` (Premium SKU)
+- **Container Apps Environment**: `cae-ae-bcrev-{env}`
+- **Container App Job - Bill**: `caj-ae-bcrevdata-accsync-{env}`
+- **Container App Job - Data**: `caj-ae-bcrevproc-sah-cb-{env}`
+- **SQL Server**: `sql-ae-bcrevdata-{env}`
+- **SQL Database**: `bc_cc_revenue_data-{env}`
 
 ## Prerequisites
 

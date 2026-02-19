@@ -12,7 +12,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('Container registry name pattern')
-param namePattern string = 'acraetestrebc'
+param namePattern string = 'acraebcrev'
 
 @description('Managed identity resource ID')
 param managedIdentityId string

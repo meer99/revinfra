@@ -11,7 +11,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('Managed identity name pattern')
-param namePattern string = 'mi-rebc'
+param namePattern string = 'mi-ae-bcrevdata'
 
 var managedIdentityName = '${namePattern}-${environment}'
 

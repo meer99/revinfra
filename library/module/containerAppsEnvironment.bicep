@@ -12,7 +12,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('Container Apps Environment name pattern')
-param namePattern string = 'cae-rebc'
+param namePattern string = 'cae-ae-bcrev'
 
 @description('Managed identity resource ID')
 param managedIdentityId string

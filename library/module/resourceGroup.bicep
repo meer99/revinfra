@@ -14,7 +14,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('Resource group name pattern')
-param namePattern string = 'rg-rebc'
+param namePattern string = 'rg-ae-bcrev'
 
 var resourceGroupName = '${namePattern}-${environment}'
 

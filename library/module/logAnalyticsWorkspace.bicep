@@ -11,7 +11,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('Log Analytics workspace name pattern')
-param namePattern string = 'log-rebc'
+param namePattern string = 'la-ae-bcrevdata'
 
 @description('Workspace SKU')
 @allowed(['PerGB2018', 'Free', 'Standalone', 'PerNode'])

@@ -1,5 +1,5 @@
 // Module: Container App Job 1 - Bill Processor
-// Description: Dedicated module for caj-bill-{env}
+// Description: Dedicated module for caj-ae-bcrevdata-accsync-{env}
 
 @description('Environment name (dev1, sit, uat, prod)')
 param environment string
@@ -19,7 +19,7 @@ param managedIdentityId string
 @description('Container image (e.g., mcr.microsoft.com/azuredocs/containerapps-helloworld:latest)')
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
-var jobName = 'caj-bill-${environment}'
+var jobName = 'caj-ae-bcrevdata-accsync-${environment}'
 var containerName = 'bill-processor'
 var cpu = '0.25'
 var memory = '0.5Gi'
