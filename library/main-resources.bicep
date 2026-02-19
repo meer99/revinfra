@@ -17,6 +17,15 @@ param namePatterns object
 @description('Environment parameters')
 param envParams object
 
+@description('Name of the existing virtual network')
+param existingVirtualNetworkName string
+
+@description('Name of the existing subnet')
+param existingSubnetName string
+
+@description('Name of the existing network resource group containing the VNet')
+param existingNetworkResourceGroupName string
+
 // 1. Deploy Managed Identity
 module managedIdentity 'module/managedIdentity.bicep' = if (envParams.deployManagedIdentity) {
   name: 'deploy-mi-${environment}'
@@ -134,6 +143,68 @@ module sqlDatabase 'module/sqlDatabase.bicep' = if (envParams.deploySqlDatabase)
   ]
 }
 
+// Reference the existing Virtual Network and Subnet from the network resource group
+resource existingVirtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
+  name: existingVirtualNetworkName
+  scope: resourceGroup(existingNetworkResourceGroupName)
+}
+
+resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {
+  parent: existingVirtualNetwork
+  name: existingSubnetName
+}
+
+// 9. Deploy Private Endpoint for Container Registry
+module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr) {
+  name: 'deploy-pe-cr-${environment}'
+  params: {
+    environment: environment
+    location: location
+    tags: tags
+    namePattern: namePatterns.privateEndpointCr
+    privateLinkServiceId: envParams.deployContainerRegistry ? containerRegistry.outputs.containerRegistryId : ''
+    groupIds: ['registry']
+    subnetId: existingSubnet.id
+  }
+  dependsOn: [
+    containerRegistry
+  ]
+}
+
+// 10. Deploy Private Endpoint for Container Apps Environment
+module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae) {
+  name: 'deploy-pe-cae-${environment}'
+  params: {
+    environment: environment
+    location: location
+    tags: tags
+    namePattern: namePatterns.privateEndpointCae
+    privateLinkServiceId: envParams.deployContainerAppsEnvironment ? containerAppsEnvironment.outputs.containerAppsEnvironmentId : ''
+    groupIds: ['managedEnvironments']
+    subnetId: existingSubnet.id
+  }
+  dependsOn: [
+    containerAppsEnvironment
+  ]
+}
+
+// 11. Deploy Private Endpoint for SQL Server
+module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql) {
+  name: 'deploy-pe-sql-${environment}'
+  params: {
+    environment: environment
+    location: location
+    tags: tags
+    namePattern: namePatterns.privateEndpointSql
+    privateLinkServiceId: envParams.deploySqlServer ? sqlServer.outputs.sqlServerId : ''
+    groupIds: ['sqlServer']
+    subnetId: existingSubnet.id
+  }
+  dependsOn: [
+    sqlServer
+  ]
+}
+
 // Outputs
 output managedIdentityId string = envParams.deployManagedIdentity ? managedIdentity.outputs.managedIdentityId : ''
 output containerRegistryName string = envParams.deployContainerRegistry ? containerRegistry.outputs.containerRegistryName : ''
@@ -144,3 +215,6 @@ output containerAppsEnvironmentId string = envParams.deployContainerAppsEnvironm
 output sqlServerName string = envParams.deploySqlServer ? sqlServer.outputs.sqlServerName : ''
 output sqlServerId string = envParams.deploySqlServer ? sqlServer.outputs.sqlServerId : ''
 output sqlDatabaseName string = envParams.deploySqlDatabase ? sqlDatabase.outputs.sqlDatabaseName : ''
+output privateEndpointCrName string = envParams.deployPrivateEndpointCr ? privateEndpointCr.outputs.privateEndpointName : ''
+output privateEndpointCaeName string = envParams.deployPrivateEndpointCae ? privateEndpointCae.outputs.privateEndpointName : ''
+output privateEndpointSqlName string = envParams.deployPrivateEndpointSql ? privateEndpointSql.outputs.privateEndpointName : ''
