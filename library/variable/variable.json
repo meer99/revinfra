@@ -1,6 +1,6 @@
 {
   "location": "australiaeast",
-  "subscriptionName": "Meer-Subscription",
+  "subscriptionName": "ucq-lz-testing",
   "networkResourceGroup": "rg-ae-net-test",
   "virtualNetwork": "vnet-ae-internal-test",
   "subnet": "snet-ae-bcrev",
