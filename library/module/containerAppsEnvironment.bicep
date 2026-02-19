@@ -51,6 +51,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
       }
     ]
     zoneRedundant: false
+    publicNetworkAccess: 'Disabled'
   }
 }
 
