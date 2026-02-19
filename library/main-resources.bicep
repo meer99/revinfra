@@ -155,7 +155,7 @@ resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' e
 }
 
 // 9. Deploy Private Endpoint for Container Registry
-module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr) {
+module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr && envParams.deployContainerRegistry) {
   name: 'deploy-pe-cr-${environment}'
   params: {
     environment: environment
@@ -172,7 +172,7 @@ module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPr
 }
 
 // 10. Deploy Private Endpoint for Container Apps Environment
-module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae) {
+module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae && envParams.deployContainerAppsEnvironment) {
   name: 'deploy-pe-cae-${environment}'
   params: {
     environment: environment
@@ -189,7 +189,7 @@ module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployP
 }
 
 // 11. Deploy Private Endpoint for SQL Server
-module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql) {
+module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql && envParams.deploySqlServer) {
   name: 'deploy-pe-sql-${environment}'
   params: {
     environment: environment
@@ -215,6 +215,6 @@ output containerAppsEnvironmentId string = envParams.deployContainerAppsEnvironm
 output sqlServerName string = envParams.deploySqlServer ? sqlServer.outputs.sqlServerName : ''
 output sqlServerId string = envParams.deploySqlServer ? sqlServer.outputs.sqlServerId : ''
 output sqlDatabaseName string = envParams.deploySqlDatabase ? sqlDatabase.outputs.sqlDatabaseName : ''
-output privateEndpointCrName string = envParams.deployPrivateEndpointCr ? privateEndpointCr.outputs.privateEndpointName : ''
-output privateEndpointCaeName string = envParams.deployPrivateEndpointCae ? privateEndpointCae.outputs.privateEndpointName : ''
-output privateEndpointSqlName string = envParams.deployPrivateEndpointSql ? privateEndpointSql.outputs.privateEndpointName : ''
+output privateEndpointCrName string = envParams.deployPrivateEndpointCr && envParams.deployContainerRegistry ? privateEndpointCr.outputs.privateEndpointName : ''
+output privateEndpointCaeName string = envParams.deployPrivateEndpointCae && envParams.deployContainerAppsEnvironment ? privateEndpointCae.outputs.privateEndpointName : ''
+output privateEndpointSqlName string = envParams.deployPrivateEndpointSql && envParams.deploySqlServer ? privateEndpointSql.outputs.privateEndpointName : ''
