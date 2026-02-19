@@ -22,12 +22,8 @@ var tags = union(commonTags, {
 // Extract configuration
 var location = variables.location
 var namePatterns = variables.namePatterns
-var existingNetworkResourceGroup = variables.existingNetworkResourceGroup
-var existingVirtualNetwork = variables.existingVirtualNetwork
-var existingSubnet = variables.existingSubnet
-
 // Construct the subnet resource ID explicitly to avoid cross-resource-group scope issues
-var subnetId = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${existingNetworkResourceGroup}/providers/Microsoft.Network/virtualNetworks/${existingVirtualNetwork}/subnets/${existingSubnet}'
+var subnetId = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${variables.networkResourceGroup}/providers/Microsoft.Network/virtualNetworks/${variables.virtualNetwork}/subnets/${variables.subnet}'
 
 // 1. Deploy Resource Group
 var resourceGroupName = '${namePatterns.resourceGroup}-${environment}'
