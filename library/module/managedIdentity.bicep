@@ -1,7 +1,7 @@
 // Module: Managed Identity
 // Description: Creates a user-assigned managed identity
 
-@description('Environment name (dev, uat, prod)')
+@description('Environment name (dev1, uat, prod)')
 param environment string
 
 @description('Azure region for resources')

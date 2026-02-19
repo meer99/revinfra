@@ -1,6 +1,6 @@
 # revinfra
 
-Azure Infrastructure as Code (IaC) project using Bicep modules for multi-environment deployment (Dev, UAT, Prod).
+Azure Infrastructure as Code (IaC) project using Bicep modules for multi-environment deployment (Dev1, UAT, Prod).
 
 ## Overview
 
@@ -14,7 +14,7 @@ This repository contains modular Bicep templates for deploying Azure resources i
 - Log Analytics Workspace
 
 ## Environments
-- **Dev**
+- **Dev1**
 - **UAT**
 - **Prod**
 
@@ -29,7 +29,7 @@ See the [library/README.md](library/README.md) for complete documentation, deplo
 
 ```bash
 cd library
-./deploy.sh dev    # Deploy to Dev environment
+./deploy.sh dev1    # Deploy to Dev1 environment
 ./deploy.sh uat    # Deploy to UAT environment
 ./deploy.sh prod   # Deploy to Prod environment
 ```
@@ -52,7 +52,7 @@ revinfra/
 ## Features
 
 - ✅ Modular and reusable Bicep templates
-- ✅ Multi-environment support (Dev, UAT, Prod)
+- ✅ Multi-environment support (Dev1, UAT, Prod)
 - ✅ Private endpoints for secure access
 - ✅ Managed identity for authentication
 - ✅ Manual deployment with Azure DevOps pipeline (environment selectable via parameter, `trigger: none`)
@@ -62,7 +62,7 @@ revinfra/
 ## Contributing
 
 This is an infrastructure-as-code repository. All changes should be:
-1. Tested in Dev environment first
+1. Tested in Dev1 environment first
 2. Validated with Bicep linter
 3. Reviewed before merging to main
 

@@ -1,7 +1,7 @@
 // Module: Container App Job 2 - Data Processor
 // Description: Dedicated module for caj-data-{env}
 
-@description('Environment name (dev, uat, prod)')
+@description('Environment name (dev1, uat, prod)')
 param environment string
 
 @description('Azure region for resources')
