@@ -17,14 +17,8 @@ param namePatterns object
 @description('Environment parameters')
 param envParams object
 
-@description('Name of the existing virtual network')
-param existingVirtualNetworkName string
-
-@description('Name of the existing subnet')
-param existingSubnetName string
-
-@description('Name of the existing network resource group containing the VNet')
-param existingNetworkResourceGroupName string
+@description('Resource ID of the existing subnet for private endpoints')
+param subnetId string
 
 // 1. Deploy Managed Identity
 module managedIdentity 'module/managedIdentity.bicep' = if (envParams.deployManagedIdentity) {
@@ -143,17 +137,6 @@ module sqlDatabase 'module/sqlDatabase.bicep' = if (envParams.deploySqlDatabase)
   ]
 }
 
-// Reference the existing Virtual Network and Subnet from the network resource group
-resource existingVirtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
-  name: existingVirtualNetworkName
-  scope: resourceGroup(existingNetworkResourceGroupName)
-}
-
-resource existingSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' existing = {
-  parent: existingVirtualNetwork
-  name: existingSubnetName
-}
-
 // 9. Deploy Private Endpoint for Container Registry
 module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr && envParams.deployContainerRegistry) {
   name: 'deploy-pe-cr-${environment}'
@@ -164,7 +147,7 @@ module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPr
     namePattern: namePatterns.privateEndpointCr
     privateLinkServiceId: envParams.deployContainerRegistry ? containerRegistry.outputs.containerRegistryId : ''
     groupIds: ['registry']
-    subnetId: existingSubnet.id
+    subnetId: subnetId
   }
   dependsOn: [
     containerRegistry
@@ -181,7 +164,7 @@ module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployP
     namePattern: namePatterns.privateEndpointCae
     privateLinkServiceId: envParams.deployContainerAppsEnvironment ? containerAppsEnvironment.outputs.containerAppsEnvironmentId : ''
     groupIds: ['managedEnvironments']
-    subnetId: existingSubnet.id
+    subnetId: subnetId
   }
   dependsOn: [
     containerAppsEnvironment
@@ -198,7 +181,7 @@ module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployP
     namePattern: namePatterns.privateEndpointSql
     privateLinkServiceId: envParams.deploySqlServer ? sqlServer.outputs.sqlServerId : ''
     groupIds: ['sqlServer']
-    subnetId: existingSubnet.id
+    subnetId: subnetId
   }
   dependsOn: [
     sqlServer
