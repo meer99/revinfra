@@ -12,6 +12,11 @@ parameters:
       - uat
       - prod
 
+  - name: confirmDeploy
+    displayName: 'Confirm deployment (must be true to deploy)'
+    type: boolean
+    default: false
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -25,9 +30,10 @@ steps:
 
   - task: AzureCLI@2
     displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
+    condition: and(succeeded(), eq('${{ parameters.confirmDeploy }}', 'true'))
     inputs:
       azureSubscription: $(azureServiceConnection)
       scriptType: 'bash'
       scriptLocation: 'scriptPath'
       scriptPath: 'library/deploy.sh'
-      arguments: '${{ parameters.environment }}'
+      arguments: '${{ parameters.environment }} --confirm'
