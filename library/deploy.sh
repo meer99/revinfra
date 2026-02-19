@@ -16,4 +16,4 @@ az deployment sub create \
     --location australiaeast \
     --template-file "${SCRIPT_DIR}/main.bicep" \
     --parameters environment="$ENVIRONMENT" \
-    --name "deploy-rebc-${ENVIRONMENT}"
+    --name "deploy-bcrev-${ENVIRONMENT}"

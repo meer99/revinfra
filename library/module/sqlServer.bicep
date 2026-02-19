@@ -11,7 +11,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('SQL Server name pattern')
-param namePattern string = 'sql-rebc'
+param namePattern string = 'sql-ae-bcrevdata'
 
 @description('SQL Server administrator login')
 param administratorLogin string

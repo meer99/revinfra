@@ -1,22 +1,22 @@
 {
   "location": "australiaeast",
   "subscriptionName": "Meer-Subscription",
-  "networkResourceGroup": "rg-net-rebc",
-  "virtualNetwork": "vnt-rebc",
-  "subnet": "snet-rebc",
+  "networkResourceGroup": "rg-ae-net-test",
+  "virtualNetwork": "vnet-ae-internal-test",
+  "subnet": "snet-ae-bcrev",
   "namePatterns": {
-    "resourceGroup": "rg-rebc",
-    "networkResourceGroup": "rg-net-rebc",
-    "managedIdentity": "mi-rebc",
-    "containerRegistry": "acraetestrebc",
-    "containerAppsEnvironment": "cae-rebc",
-    "containerAppJobBill": "caj-bill",
-    "containerAppJobData": "caj-data",
-    "sqlServer": "sql-rebc",
-    "sqlDatabase": "db-rebc",
-    "logAnalyticsWorkspace": "log-rebc",
-    "privateEndpointCr": "pe-cr",
-    "privateEndpointCae": "pe-cae",
-    "privateEndpointSql": "pe-sql"
+    "resourceGroup": "rg-ae-bcrev",
+    "networkResourceGroup": "rg-ae-net-test",
+    "managedIdentity": "mi-ae-bcrevdata",
+    "containerRegistry": "acraebcrev",
+    "containerAppsEnvironment": "cae-ae-bcrev",
+    "containerAppJobBill": "caj-ae-bcrevdata-accsync",
+    "containerAppJobData": "caj-ae-bcrevproc-sah-cb",
+    "sqlServer": "sql-ae-bcrevdata",
+    "sqlDatabase": "bc_cc_revenue_data",
+    "logAnalyticsWorkspace": "la-ae-bcrevdata",
+    "privateEndpointCr": "pe-acr-ae-bcrev",
+    "privateEndpointCae": "pe-cae-ae-bcrev",
+    "privateEndpointSql": "pe-sql-ae-bcrevdata"
   }
 }

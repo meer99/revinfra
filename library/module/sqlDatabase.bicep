@@ -11,7 +11,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('SQL Database name pattern')
-param namePattern string = 'db-rebc'
+param namePattern string = 'bc_cc_revenue_data'
 
 @description('SQL Server name')
 param sqlServerName string
