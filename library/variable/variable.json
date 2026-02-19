@@ -14,9 +14,9 @@
     "containerAppJobData": "caj-ae-bcrevproc-sah-cb",
     "sqlServer": "sql-ae-bcrevdata",
     "sqlDatabase": "bc_cc_revenue_data",
-    "logAnalyticsWorkspace": "la-ae-bcrevdata",
-    "privateEndpointCr": "pe-acr-ae-bcrev",
-    "privateEndpointCae": "pe-cae-ae-bcrev",
-    "privateEndpointSql": "pe-sql-ae-bcrevdata"
+    "logAnalyticsWorkspace": "log-ae-bcrevdata",
+    "privateEndpointCr": "pe-ae-acr-bcrev",
+    "privateEndpointCae": "pe-ae-cae-bcrev",
+    "privateEndpointSql": "pe-ae-sql-bcrevdata"
   }
 }
