@@ -13,6 +13,8 @@ parameters:
       - uat
       - prod
 
+  # DEPLOYMENT IS OFF BY DEFAULT.
+  # Set confirmDeploy to true in the pipeline run dialog to actually deploy.
   - name: confirmDeploy
     displayName: 'Confirm deployment (must be true to deploy)'
     type: boolean
@@ -29,6 +31,7 @@ steps:
     workingDirectory: 'library'
     displayName: 'Validate Bicep'
 
+  # Only runs when confirmDeploy is explicitly set to true — skipped by default.
   - task: AzureCLI@2
     displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
     condition: and(succeeded(), eq(parameters.confirmDeploy, true))
