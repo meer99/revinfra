@@ -27,7 +27,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
     inputs:
-      azureSubscription: $(azureServiceConnection)
+      azureSubscription: ${{ variables.azureServiceConnection }}
       scriptType: 'bash'
       scriptLocation: 'scriptPath'
       scriptPath: 'library/deploy.sh'
