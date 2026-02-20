@@ -15,7 +15,8 @@ library/
 │   ├── containerAppJob2.bicep           # Container App Job module for caj-ae-bcrevproc-sah-cb-{env}
 │   ├── sqlServer.bicep                  # SQL Server module
 │   ├── sqlDatabase.bicep                # SQL Database module
-│   └── logAnalyticsWorkspace.bicep      # Log Analytics Workspace module
+│   ├── logAnalyticsWorkspace.bicep      # Log Analytics Workspace module
+│   └── privateEndpoint.bicep            # Private Endpoint module
 ├── variable/                            # Configuration files
 │   ├── tags.json                        # Common tags for all resources
 │   ├── variable.json                    # Shared variables (names, location, etc.)
@@ -36,6 +37,9 @@ library/
 - **Container App Job - Data**: `caj-ae-bcrevproc-sah-cb-{env}`
 - **SQL Server**: `sql-ae-bcrevdata-{env}`
 - **SQL Database**: `bc_cc_revenue_data-{env}`
+- **Private Endpoint (Container Registry)**: `pe-ae-acr-bcrev-{env}`
+- **Private Endpoint (Container Apps Environment)**: `pe-ae-cae-bcrev-{env}`
+- **Private Endpoint (SQL Server)**: `pe-ae-sql-bcrevdata-{env}`
 
 ## Prerequisites
 
@@ -58,16 +62,16 @@ The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the
 
 ```bash
 # Deploy to Dev1
-./deploy.sh dev1
+./deploy.sh dev1 --confirm
 
 # Deploy to SIT
-./deploy.sh sit
+./deploy.sh sit --confirm
 
 # Deploy to UAT
-./deploy.sh uat
+./deploy.sh uat --confirm
 
 # Deploy to Prod
-./deploy.sh prod
+./deploy.sh prod --confirm
 ```
 
 ## Support
