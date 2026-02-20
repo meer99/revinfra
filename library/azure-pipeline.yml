@@ -13,16 +13,11 @@ parameters:
       - uat
       - prod
 
-  - name: confirmDeploy
-    displayName: 'Confirm deployment (must be true to deploy)'
-    type: boolean
-    default: true
-
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  azureServiceConnection: 'ado-sb'
+  azureServiceConnection: 'ado'
 
 steps:
   - script: az bicep build --file main.bicep
@@ -31,7 +26,6 @@ steps:
 
   - task: AzureCLI@2
     displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
-    condition: and(succeeded(), eq('${{ parameters.confirmDeploy }}', 'true'))
     inputs:
       azureSubscription: $(azureServiceConnection)
       scriptType: 'bash'
