@@ -11,9 +11,12 @@ if [ "$CONFIRM" != "--confirm" ]; then
     exit 1
 fi
 
-echo "Deploying to '${ENVIRONMENT}'..."
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+DEPLOYMENT_NAME="deploy-bcrev-${ENVIRONMENT}-${TIMESTAMP}"
+
+echo "Deploying to '${ENVIRONMENT}' (${DEPLOYMENT_NAME})..."
 az deployment sub create \
     --location australiaeast \
     --template-file "${SCRIPT_DIR}/main.bicep" \
     --parameters environment="$ENVIRONMENT" \
-    --name "deploy-bcrev-${ENVIRONMENT}"
+    --name "$DEPLOYMENT_NAME"
