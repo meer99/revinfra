@@ -22,7 +22,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  azureServiceConnection: 'ado'
+  azureServiceConnection: 'ado-sb'
 
 steps:
   - script: az bicep build --file main.bicep
