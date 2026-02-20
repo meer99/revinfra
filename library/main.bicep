@@ -71,14 +71,14 @@ module resources 'main-resources.bicep' = if (deployResources) {
 }
 
 // Outputs
-output resourceGroupName string = envParams.deployResourceGroup ? resourceGroup.outputs.resourceGroupName : resourceGroupName
-output networkResourceGroupName string = envParams.deployNetworkResourceGroup ? networkResourceGroup.outputs.resourceGroupName : networkResourceGroupName
-output managedIdentityId string = deployResources && envParams.deployManagedIdentity ? resources.outputs.managedIdentityId : ''
-output containerRegistryName string = deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryName : ''
-output containerRegistryLoginServer string = deployResources && envParams.deployContainerRegistry ? resources.outputs.containerRegistryLoginServer : ''
-output containerAppsEnvironmentName string = deployResources && envParams.deployContainerAppsEnvironment ? resources.outputs.containerAppsEnvironmentName : ''
-output sqlServerName string = deployResources && envParams.deploySqlServer ? resources.outputs.sqlServerName : ''
-output sqlDatabaseName string = deployResources && envParams.deploySqlDatabase ? resources.outputs.sqlDatabaseName : ''
-output privateEndpointCrName string = deployResources && envParams.deployPrivateEndpointCr && envParams.deployContainerRegistry ? resources.outputs.privateEndpointCrName : ''
-output privateEndpointCaeName string = deployResources && envParams.deployPrivateEndpointCae && envParams.deployContainerAppsEnvironment ? resources.outputs.privateEndpointCaeName : ''
-output privateEndpointSqlName string = deployResources && envParams.deployPrivateEndpointSql && envParams.deploySqlServer ? resources.outputs.privateEndpointSqlName : ''
+output resourceGroupName string = resourceGroup.?outputs.resourceGroupName ?? resourceGroupName
+output networkResourceGroupName string = networkResourceGroup.?outputs.resourceGroupName ?? networkResourceGroupName
+output managedIdentityId string = resources.?outputs.managedIdentityId ?? ''
+output containerRegistryName string = resources.?outputs.containerRegistryName ?? ''
+output containerRegistryLoginServer string = resources.?outputs.containerRegistryLoginServer ?? ''
+output containerAppsEnvironmentName string = resources.?outputs.containerAppsEnvironmentName ?? ''
+output sqlServerName string = resources.?outputs.sqlServerName ?? ''
+output sqlDatabaseName string = resources.?outputs.sqlDatabaseName ?? ''
+output privateEndpointCrName string = resources.?outputs.privateEndpointCrName ?? ''
+output privateEndpointCaeName string = resources.?outputs.privateEndpointCaeName ?? ''
+output privateEndpointSqlName string = resources.?outputs.privateEndpointSqlName ?? ''

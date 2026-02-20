@@ -11,6 +11,7 @@ param location string = 'australiaeast'
 param tags object = {}
 
 @description('Log Analytics workspace name pattern')
+@minLength(4)
 param namePattern string = 'log-ae-bcrevdata'
 
 @description('Workspace SKU')
@@ -51,4 +52,5 @@ output workspaceId string = logAnalyticsWorkspace.id
 output workspaceCustomerId string = logAnalyticsWorkspace.properties.customerId
 
 @description('The primary shared key of the Log Analytics workspace')
+#disable-next-line outputs-should-not-contain-secrets
 output workspaceSharedKey string = logAnalyticsWorkspace.listKeys().primarySharedKey

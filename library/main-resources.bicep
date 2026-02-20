@@ -50,11 +50,8 @@ module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deploy
     location: location
     tags: tags
     namePattern: namePatterns.containerRegistry
-    managedIdentityId: managedIdentity.outputs.managedIdentityId
+    managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
   }
-  dependsOn: [
-    managedIdentity
-  ]
 }
 
 // 4. Deploy Container Apps Environment
@@ -65,14 +62,10 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     location: location
     tags: tags
     namePattern: namePatterns.containerAppsEnvironment
-    managedIdentityId: managedIdentity.outputs.managedIdentityId
-    logAnalyticsCustomerId: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceCustomerId : ''
-    logAnalyticsSharedKey: envParams.deployLogAnalyticsWorkspace ? logAnalyticsWorkspace.outputs.workspaceSharedKey : ''
+    managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
+    logAnalyticsCustomerId: logAnalyticsWorkspace.?outputs.workspaceCustomerId ?? ''
+    logAnalyticsSharedKey: logAnalyticsWorkspace.?outputs.workspaceSharedKey ?? ''
   }
-  dependsOn: [
-    logAnalyticsWorkspace
-    managedIdentity
-  ]
 }
 
 // 5. Deploy Container App Job - Bill
@@ -82,14 +75,10 @@ module containerAppJobBill 'module/containerAppJob1.bicep' = if (envParams.deplo
     environment: environment
     location: location
     tags: tags
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
-    managedIdentityId: managedIdentity.outputs.managedIdentityId
+    containerAppsEnvironmentId: containerAppsEnvironment.?outputs.containerAppsEnvironmentId ?? ''
+    managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     containerImage: envParams.containerImage
   }
-  dependsOn: [
-    containerAppsEnvironment
-    managedIdentity
-  ]
 }
 
 // 6. Deploy Container App Job - Data
@@ -99,14 +88,10 @@ module containerAppJobData 'module/containerAppJob2.bicep' = if (envParams.deplo
     environment: environment
     location: location
     tags: tags
-    containerAppsEnvironmentId: containerAppsEnvironment.outputs.containerAppsEnvironmentId
-    managedIdentityId: managedIdentity.outputs.managedIdentityId
+    containerAppsEnvironmentId: containerAppsEnvironment.?outputs.containerAppsEnvironmentId ?? ''
+    managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     containerImage: envParams.containerImage
   }
-  dependsOn: [
-    containerAppsEnvironment
-    managedIdentity
-  ]
 }
 
 // 7. Deploy SQL Server
@@ -130,11 +115,8 @@ module sqlDatabase 'module/sqlDatabase.bicep' = if (envParams.deploySqlDatabase)
     location: location
     tags: tags
     namePattern: namePatterns.sqlDatabase
-    sqlServerName: sqlServer.outputs.sqlServerName
+    sqlServerName: sqlServer.?outputs.sqlServerName ?? ''
   }
-  dependsOn: [
-    sqlServer
-  ]
 }
 
 // 9. Deploy Private Endpoint for Container Registry
@@ -145,13 +127,10 @@ module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPr
     location: location
     tags: tags
     namePattern: namePatterns.privateEndpointCr
-    privateLinkServiceId: envParams.deployContainerRegistry ? containerRegistry.outputs.containerRegistryId : ''
+    privateLinkServiceId: containerRegistry.?outputs.containerRegistryId ?? ''
     groupIds: ['registry']
     subnetId: subnetId
   }
-  dependsOn: [
-    containerRegistry
-  ]
 }
 
 // 10. Deploy Private Endpoint for Container Apps Environment
@@ -162,13 +141,10 @@ module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployP
     location: location
     tags: tags
     namePattern: namePatterns.privateEndpointCae
-    privateLinkServiceId: envParams.deployContainerAppsEnvironment ? containerAppsEnvironment.outputs.containerAppsEnvironmentId : ''
+    privateLinkServiceId: containerAppsEnvironment.?outputs.containerAppsEnvironmentId ?? ''
     groupIds: ['managedEnvironments']
     subnetId: subnetId
   }
-  dependsOn: [
-    containerAppsEnvironment
-  ]
 }
 
 // 11. Deploy Private Endpoint for SQL Server
@@ -179,25 +155,22 @@ module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployP
     location: location
     tags: tags
     namePattern: namePatterns.privateEndpointSql
-    privateLinkServiceId: envParams.deploySqlServer ? sqlServer.outputs.sqlServerId : ''
+    privateLinkServiceId: sqlServer.?outputs.sqlServerId ?? ''
     groupIds: ['sqlServer']
     subnetId: subnetId
   }
-  dependsOn: [
-    sqlServer
-  ]
 }
 
 // Outputs
-output managedIdentityId string = envParams.deployManagedIdentity ? managedIdentity.outputs.managedIdentityId : ''
-output containerRegistryName string = envParams.deployContainerRegistry ? containerRegistry.outputs.containerRegistryName : ''
-output containerRegistryLoginServer string = envParams.deployContainerRegistry ? containerRegistry.outputs.containerRegistryLoginServer : ''
-output containerRegistryId string = envParams.deployContainerRegistry ? containerRegistry.outputs.containerRegistryId : ''
-output containerAppsEnvironmentName string = envParams.deployContainerAppsEnvironment ? containerAppsEnvironment.outputs.containerAppsEnvironmentName : ''
-output containerAppsEnvironmentId string = envParams.deployContainerAppsEnvironment ? containerAppsEnvironment.outputs.containerAppsEnvironmentId : ''
-output sqlServerName string = envParams.deploySqlServer ? sqlServer.outputs.sqlServerName : ''
-output sqlServerId string = envParams.deploySqlServer ? sqlServer.outputs.sqlServerId : ''
-output sqlDatabaseName string = envParams.deploySqlDatabase ? sqlDatabase.outputs.sqlDatabaseName : ''
-output privateEndpointCrName string = envParams.deployPrivateEndpointCr && envParams.deployContainerRegistry ? privateEndpointCr.outputs.privateEndpointName : ''
-output privateEndpointCaeName string = envParams.deployPrivateEndpointCae && envParams.deployContainerAppsEnvironment ? privateEndpointCae.outputs.privateEndpointName : ''
-output privateEndpointSqlName string = envParams.deployPrivateEndpointSql && envParams.deploySqlServer ? privateEndpointSql.outputs.privateEndpointName : ''
+output managedIdentityId string = managedIdentity.?outputs.managedIdentityId ?? ''
+output containerRegistryName string = containerRegistry.?outputs.containerRegistryName ?? ''
+output containerRegistryLoginServer string = containerRegistry.?outputs.containerRegistryLoginServer ?? ''
+output containerRegistryId string = containerRegistry.?outputs.containerRegistryId ?? ''
+output containerAppsEnvironmentName string = containerAppsEnvironment.?outputs.containerAppsEnvironmentName ?? ''
+output containerAppsEnvironmentId string = containerAppsEnvironment.?outputs.containerAppsEnvironmentId ?? ''
+output sqlServerName string = sqlServer.?outputs.sqlServerName ?? ''
+output sqlServerId string = sqlServer.?outputs.sqlServerId ?? ''
+output sqlDatabaseName string = sqlDatabase.?outputs.sqlDatabaseName ?? ''
+output privateEndpointCrName string = privateEndpointCr.?outputs.privateEndpointName ?? ''
+output privateEndpointCaeName string = privateEndpointCae.?outputs.privateEndpointName ?? ''
+output privateEndpointSqlName string = privateEndpointSql.?outputs.privateEndpointName ?? ''
