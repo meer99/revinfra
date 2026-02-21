@@ -65,6 +65,7 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     logAnalyticsCustomerId: logAnalyticsWorkspace.?outputs.workspaceCustomerId ?? ''
     logAnalyticsSharedKey: logAnalyticsWorkspace.?outputs.workspaceSharedKey ?? ''
+    subnetId: subnetId
   }
 }
 
