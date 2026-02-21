@@ -6,7 +6,6 @@
   "subnet": "snet-ae-bcrev",
   "namePatterns": {
     "resourceGroup": "rg-ae-bcrev",
-    "networkResourceGroup": "rg-ae-net-test",
     "managedIdentity": "mi-ae-bcrevdata",
     "containerRegistry": "acraebcrev",
     "containerAppsEnvironment": "cae-ae-bcrev",
