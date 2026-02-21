@@ -23,6 +23,12 @@ pool:
 
 variables:
   azureServiceConnection: 'ado-sb'
+  ${{ if eq(parameters.whatIf, true) }}:
+    deployAction: 'What-If'
+    deployCommand: 'what-if'
+  ${{ else }}:
+    deployAction: 'Deploy'
+    deployCommand: 'create'
 
 steps:
   - script: az bicep build --file main.bicep
@@ -30,13 +36,13 @@ steps:
     displayName: 'Validate Bicep'
 
   - task: AzureCLI@2
-    displayName: '${{ if eq(parameters.whatIf, true) }}What-If${{ else }}Deploy${{ endif }} Infrastructure (${{ parameters.environment }})'
+    displayName: '$(deployAction) Infrastructure (${{ parameters.environment }})'
     inputs:
       azureSubscription: ${{ variables.azureServiceConnection }}
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        az deployment sub ${{ if eq(parameters.whatIf, true) }}what-if${{ else }}create${{ endif }} \
+        az deployment sub $(deployCommand) \
           --location australiaeast \
           --template-file library/main.bicep \
           --parameters environment=${{ parameters.environment }} \
