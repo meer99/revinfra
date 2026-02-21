@@ -68,9 +68,9 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
   }
 }
 
-// 5. Deploy Container App Job - Bill
-module containerAppJobBill 'module/containerAppJob1.bicep' = if (envParams.deployContainerAppJobBill) {
-  name: 'deploy-caj-bill-${environment}'
+// 5. Deploy Container App Job - accsync
+module containerAppJobaccsync 'module/containerAppJob1.bicep' = if (envParams.deployContainerAppJobaccsync) {
+  name: 'deploy-caj-accsync-${environment}'
   params: {
     environment: environment
     location: location
@@ -81,9 +81,9 @@ module containerAppJobBill 'module/containerAppJob1.bicep' = if (envParams.deplo
   }
 }
 
-// 6. Deploy Container App Job - Data
-module containerAppJobData 'module/containerAppJob2.bicep' = if (envParams.deployContainerAppJobData) {
-  name: 'deploy-caj-data-${environment}'
+// 6. Deploy Container App Job - sah
+module containerAppJobsah 'module/containerAppJob2.bicep' = if (envParams.deployContainerAppJobsah) {
+  name: 'deploy-caj-sah-${environment}'
   params: {
     environment: environment
     location: location

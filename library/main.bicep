@@ -52,7 +52,7 @@ module networkResourceGroup 'module/resourceGroup.bicep' = if (envParams.deployN
 }
 
 // 3. Deploy resources to resource group
-var deployResources = envParams.deployManagedIdentity || envParams.deployLogAnalyticsWorkspace || envParams.deployContainerRegistry || envParams.deployContainerAppsEnvironment || envParams.deployContainerAppJobBill || envParams.deployContainerAppJobData || envParams.deploySqlServer || envParams.deploySqlDatabase || envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
+var deployResources = envParams.deployManagedIdentity || envParams.deployLogAnalyticsWorkspace || envParams.deployContainerRegistry || envParams.deployContainerAppsEnvironment || envParams.deployContainerAppJobaccsync || envParams.deployContainerAppJobsah || envParams.deploySqlServer || envParams.deploySqlDatabase || envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
 
 module resources 'main-resources.bicep' = if (deployResources) {
   name: 'deploy-resources-${environment}'
