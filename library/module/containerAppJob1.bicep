@@ -20,7 +20,7 @@ param managedIdentityId string
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
 var jobName = 'caj-ae-bcrevdata-accsync-${environment}'
-var containerName = 'bill-processor'
+var containerName = 'caj-ae-bcrevdata-accsync-${environment}'
 var cpu = '0.25'
 var memory = '0.5Gi'
 var triggerType = 'Manual'
