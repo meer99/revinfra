@@ -24,6 +24,9 @@ param logAnalyticsCustomerId string
 @secure()
 param logAnalyticsSharedKey string
 
+@description('Subnet resource ID for VNET integration (required when publicNetworkAccess is Disabled)')
+param subnetId string
+
 var containerAppsEnvironmentName = '${namePattern}-${environment}'
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-10-02-preview' = {
@@ -50,6 +53,10 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-10-02-
         workloadProfileType: 'Consumption'
       }
     ]
+    vnetConfiguration: {
+      infrastructureSubnetId: subnetId
+      internal: true
+    }
     zoneRedundant: false
     publicNetworkAccess: 'Disabled'
   }
