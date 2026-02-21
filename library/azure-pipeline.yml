@@ -43,7 +43,7 @@ steps:
             --parameters environment=${{ parameters.environment }} \
             --name deploy-bcrev-${{ parameters.environment }}
 
-  - ${{ else }}:
+  - ${{ if eq(parameters.whatIf, false) }}:
     - task: AzureCLI@2
       displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
       inputs:
