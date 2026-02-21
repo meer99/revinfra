@@ -13,11 +13,6 @@ parameters:
       - uat
       - prod
 
-  - name: whatIf
-    displayName: 'What-If (preview changes only)'
-    type: boolean
-    default: false
-
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -29,30 +24,11 @@ steps:
     workingDirectory: 'library'
     displayName: 'Validate Bicep'
 
-  - ${{ if eq(parameters.whatIf, true) }}:
-    - task: AzureCLI@2
-      displayName: 'What-If Infrastructure (${{ parameters.environment }})'
-      inputs:
-        azureSubscription: ${{ variables.azureServiceConnection }}
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az deployment sub what-if \
-            --location australiaeast \
-            --template-file library/main.bicep \
-            --parameters environment=${{ parameters.environment }} \
-            --name deploy-bcrev-${{ parameters.environment }}
-
-  - ${{ if eq(parameters.whatIf, false) }}:
-    - task: AzureCLI@2
-      displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
-      inputs:
-        azureSubscription: ${{ variables.azureServiceConnection }}
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az deployment sub create \
-            --location australiaeast \
-            --template-file library/main.bicep \
-            --parameters environment=${{ parameters.environment }} \
-            --name deploy-bcrev-${{ parameters.environment }}
+  - task: AzureCLI@2
+    displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
+    inputs:
+      azureSubscription: ${{ variables.azureServiceConnection }}
+      scriptType: 'bash'
+      scriptLocation: 'scriptPath'
+      scriptPath: 'library/deploy.sh'
+      arguments: '${{ parameters.environment }} --confirm'
