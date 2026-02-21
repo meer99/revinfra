@@ -19,14 +19,15 @@ parameters:
     type: boolean
     default: false
 
+pool:
+  vmImage: 'ubuntu-latest'
+
 variables:
   azureServiceConnection: 'ado-sb'
 
 stages:
   - stage: Validate
     displayName: 'Validate Bicep'
-    pool:
-      vmImage: 'ubuntu-latest'
     jobs:
       - job: ValidateBicep
         displayName: 'Validate Bicep Templates'
@@ -38,8 +39,6 @@ stages:
   - stage: Deploy
     displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
     dependsOn: Validate
-    pool:
-      vmImage: 'ubuntu-latest'
     jobs:
       - deployment: DeployInfrastructure
         displayName: 'Deploy to ${{ parameters.environment }}'
