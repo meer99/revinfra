@@ -1,4 +1,3 @@
-// Module: Container App Job 1 - Bill Processor
 // Description: Dedicated module for caj-ae-bcrevdata-accsync-{env}
 
 @description('Environment name (dev1, sit, uat, prod)')
