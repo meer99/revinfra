@@ -1,4 +1,3 @@
-// Module: Container App Job 2 - Data Processor
 // Description: Dedicated module for caj-ae-bcrevproc-sah-cb-{env}
 
 @description('Environment name (dev1, sit, uat, prod)')
@@ -20,7 +19,7 @@ param managedIdentityId string
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
 var jobName = 'caj-ae-bcrevproc-sah-cb-${environment}'
-var containerName = 'data-processor'
+var containerName = 'caj-ae-bcrevproc-sah-cb-${environment}'
 var cpu = '0.25'
 var memory = '0.5Gi'
 var triggerType = 'Manual'
