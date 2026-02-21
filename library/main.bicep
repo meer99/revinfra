@@ -38,20 +38,7 @@ module resourceGroup 'module/resourceGroup.bicep' = if (envParams.deployResource
   }
 }
 
-// 2. Deploy Network Resource Group
-var networkResourceGroupName = '${namePatterns.networkResourceGroup}-${environment}'
-
-module networkResourceGroup 'module/resourceGroup.bicep' = if (envParams.deployNetworkResourceGroup) {
-  name: 'deploy-rg-net-${environment}'
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.networkResourceGroup
-  }
-}
-
-// 3. Deploy resources to resource group
+// 2. Deploy resources to resource group
 var deployResources = envParams.deployManagedIdentity || envParams.deployLogAnalyticsWorkspace || envParams.deployContainerRegistry || envParams.deployContainerAppsEnvironment || envParams.deployContainerAppJobaccsync || envParams.deployContainerAppJobsah || envParams.deploySqlServer || envParams.deploySqlDatabase || envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
 
 module resources 'main-resources.bicep' = if (deployResources) {
@@ -72,7 +59,6 @@ module resources 'main-resources.bicep' = if (deployResources) {
 
 // Outputs
 output resourceGroupName string = resourceGroup.?outputs.resourceGroupName ?? resourceGroupName
-output networkResourceGroupName string = networkResourceGroup.?outputs.resourceGroupName ?? networkResourceGroupName
 output managedIdentityId string = resources.?outputs.managedIdentityId ?? ''
 output containerRegistryName string = resources.?outputs.containerRegistryName ?? ''
 output containerRegistryLoginServer string = resources.?outputs.containerRegistryLoginServer ?? ''
