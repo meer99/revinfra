@@ -23,27 +23,36 @@ pool:
 
 variables:
   azureServiceConnection: 'ado-sb'
-  ${{ if eq(parameters.whatIf, true) }}:
-    deployAction: 'What-If'
-    deployCommand: 'what-if'
-  ${{ else }}:
-    deployAction: 'Deploy'
-    deployCommand: 'create'
 
 steps:
   - script: az bicep build --file main.bicep
     workingDirectory: 'library'
     displayName: 'Validate Bicep'
 
-  - task: AzureCLI@2
-    displayName: '$(deployAction) Infrastructure (${{ parameters.environment }})'
-    inputs:
-      azureSubscription: ${{ variables.azureServiceConnection }}
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        az deployment sub $(deployCommand) \
-          --location australiaeast \
-          --template-file library/main.bicep \
-          --parameters environment=${{ parameters.environment }} \
-          --name deploy-bcrev-${{ parameters.environment }}
+  - ${{ if eq(parameters.whatIf, true) }}:
+    - task: AzureCLI@2
+      displayName: 'What-If Infrastructure (${{ parameters.environment }})'
+      inputs:
+        azureSubscription: ${{ variables.azureServiceConnection }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az deployment sub what-if \
+            --location australiaeast \
+            --template-file library/main.bicep \
+            --parameters environment=${{ parameters.environment }} \
+            --name deploy-bcrev-${{ parameters.environment }}
+
+  - ${{ else }}:
+    - task: AzureCLI@2
+      displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
+      inputs:
+        azureSubscription: ${{ variables.azureServiceConnection }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az deployment sub create \
+            --location australiaeast \
+            --template-file library/main.bicep \
+            --parameters environment=${{ parameters.environment }} \
+            --name deploy-bcrev-${{ parameters.environment }}
