@@ -1,7 +1,7 @@
 # Bicep compiled JSON files
 *.json
-!library/variable/*.json
-!library/parameters.json
+!variable/*.json
+!parameters.json
 
 # Build artifacts
 **/bin/

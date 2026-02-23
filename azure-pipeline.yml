@@ -21,7 +21,6 @@ variables:
 
 steps:
   - script: az bicep build --file main.bicep
-    workingDirectory: 'library'
     displayName: 'Validate Bicep'
 
   - task: AzureCLI@2
@@ -30,5 +29,5 @@ steps:
       azureSubscription: ${{ variables.azureServiceConnection }}
       scriptType: 'bash'
       scriptLocation: 'scriptPath'
-      scriptPath: 'library/deploy.sh'
+      scriptPath: 'deploy.sh'
       arguments: '${{ parameters.environment }} --confirm'
