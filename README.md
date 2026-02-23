@@ -27,10 +27,10 @@ All resources are deployed to **Australia East**.
 ### Deploy Infrastructure
 
 ```bash
-./deploy.sh dev1    # Deploy to Dev1 environment
-./deploy.sh sit     # Deploy to SIT environment
-./deploy.sh uat     # Deploy to UAT environment
-./deploy.sh prod    # Deploy to Prod environment
+./deploy.sh dev1 --confirm    # Deploy to Dev1 environment
+./deploy.sh sit --confirm     # Deploy to SIT environment
+./deploy.sh uat --confirm     # Deploy to UAT environment
+./deploy.sh prod --confirm    # Deploy to Prod environment
 ```
 
 ## Project Structure
