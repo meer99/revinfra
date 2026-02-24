@@ -21,7 +21,7 @@ var tags = union(commonTags, {
 
 // Extract configuration
 var location = variables.location
-var namePatterns = variables.namePatterns
+var names = variables.names
 // Construct the subnet resource ID explicitly to avoid cross-resource-group scope issues
 var subnetId = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${variables.networkResourceGroup}/providers/Microsoft.Network/virtualNetworks/${variables.virtualNetwork}/subnets/${variables.subnet}'
 
@@ -43,7 +43,7 @@ module resources 'main-resources.bicep' = if (deployResources) {
     environment: environment
     location: location
     tags: tags
-    namePatterns: namePatterns
+    names: names
     envParams: envParams
     subnetId: subnetId
     privateDnsZoneIdCr: privateDnsZoneIdCr

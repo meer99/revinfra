@@ -1,17 +1,14 @@
 // Module: SQL Server
 // Description: Creates an Azure SQL Server with public access disabled
 
-@description('Environment name (dev1, sit, uat, prod)')
-param environment string
-
 @description('Azure region for resources')
 param location string = 'australiaeast'
 
 @description('Tags to apply to the SQL server')
 param tags object = {}
 
-@description('SQL Server name pattern')
-param namePattern string = 'sql-ae-bcrevdata'
+@description('SQL Server name')
+param name string
 
 @description('SQL Server administrator login')
 param administratorLogin string
@@ -30,17 +27,14 @@ param deployPrivateEndpoint bool = false
 @description('Subnet resource ID where the private endpoint will be created')
 param subnetId string = ''
 
-@description('Private endpoint name pattern')
-param privateEndpointNamePattern string = ''
+@description('Private endpoint name')
+param privateEndpointName string = ''
 
 @description('Private DNS zone resource ID for the SQL server')
 param privateDnsZoneId string = ''
 
-var sqlServerName = '${namePattern}-${environment}'
-var privateEndpointName = '${privateEndpointNamePattern}-${environment}'
-
 resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
-  name: sqlServerName
+  name: name
   location: location
   tags: tags
   properties: {
