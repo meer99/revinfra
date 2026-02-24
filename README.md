@@ -30,10 +30,11 @@ See the [library/README.md](library/README.md) for complete documentation, deplo
 
 ```bash
 cd library
-./deploy.sh dev1    # Deploy to Dev1 environment
-./deploy.sh sit     # Deploy to SIT environment
-./deploy.sh uat     # Deploy to UAT environment
-./deploy.sh prod    # Deploy to Prod environment
+./deploy.sh dev1 --what-if    # Preview Dev1 changes
+./deploy.sh dev1 --confirm    # Deploy to Dev1 environment
+./deploy.sh sit --confirm     # Deploy to SIT environment
+./deploy.sh uat --confirm     # Deploy to UAT environment
+./deploy.sh prod --confirm    # Deploy to Prod environment
 ```
 
 ## Project Structure
