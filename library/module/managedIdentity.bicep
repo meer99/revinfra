@@ -1,22 +1,17 @@
 // Module: Managed Identity
 // Description: Creates a user-assigned managed identity
 
-@description('Environment name (dev1, sit, uat, prod)')
-param environment string
-
 @description('Azure region for resources')
 param location string = 'australiaeast'
 
 @description('Tags to apply to the managed identity')
 param tags object = {}
 
-@description('Managed identity name pattern')
-param namePattern string = 'mi-ae-bcrevdata'
-
-var managedIdentityName = '${namePattern}-${environment}'
+@description('Managed identity name')
+param name string
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: managedIdentityName
+  name: name
   location: location
   tags: tags
 }

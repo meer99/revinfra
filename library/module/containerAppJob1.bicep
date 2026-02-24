@@ -1,7 +1,4 @@
-// Description: Dedicated module for caj-ae-bcrevdata-accsync-{env}
-
-@description('Environment name (dev1, sit, uat, prod)')
-param environment string
+// Description: Dedicated module for container app job accsync
 
 @description('Azure region for resources')
 param location string = 'australiaeast'
@@ -18,8 +15,9 @@ param managedIdentityId string
 @description('Container image (e.g., mcr.microsoft.com/azuredocs/containerapps-helloworld:latest)')
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
-var jobName = 'caj-ae-bcrevdata-accsync-${environment}'
-var containerName = 'caj-ae-bcrevdata-accsync-${environment}'
+@description('Container app job name')
+param name string
+
 var cpu = '0.25'
 var memory = '0.5Gi'
 var triggerType = 'Manual'
@@ -29,7 +27,7 @@ var parallelism = 1
 var replicaCompletionCount = 1
 
 resource containerAppJob 'Microsoft.App/jobs@2023-05-01' = {
-  name: jobName
+  name: name
   location: location
   tags: tags
   identity: {
@@ -52,7 +50,7 @@ resource containerAppJob 'Microsoft.App/jobs@2023-05-01' = {
     template: {
       containers: [
         {
-          name: containerName
+          name: name
           image: containerImage
           resources: {
             cpu: json(cpu)

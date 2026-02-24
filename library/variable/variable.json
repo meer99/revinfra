@@ -5,7 +5,7 @@
   "virtualNetwork": "vnet-ae-internal-test",
   "subnet": "snet-ae-bcrev",
   "resourceGroup": "rg-ae-bcre",
-  "namePatterns": {
+  "names": {
     "managedIdentity": "mi-ae-bcrevdata",
     "containerRegistry": "acraebcrev",
     "containerAppsEnvironment": "cae-ae-bcrev",

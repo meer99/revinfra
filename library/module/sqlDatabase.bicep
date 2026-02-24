@@ -1,17 +1,14 @@
 // Module: SQL Database
 // Description: Creates an Azure SQL Database with specified service tier and DTUs
 
-@description('Environment name (dev1, sit, uat, prod)')
-param environment string
-
 @description('Azure region for resources')
 param location string = 'australiaeast'
 
 @description('Tags to apply to the SQL database')
 param tags object = {}
 
-@description('SQL Database name pattern')
-param namePattern string = 'bc_cc_revenue_data'
+@description('SQL Database name')
+param name string
 
 @description('SQL Server name')
 param sqlServerName string
@@ -33,10 +30,8 @@ param maxSizeBytes int = 5368709120 // 5 GB
 @description('Collation of the database')
 param collation string = 'SQL_Latin1_General_CP1_CI_AS'
 
-var databaseName = '${namePattern}-${environment}'
-
 resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-05-01-preview' = {
-  name: '${sqlServerName}/${databaseName}'
+  name: '${sqlServerName}/${name}'
   location: location
   tags: tags
   sku: {
@@ -55,7 +50,7 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-05-01-preview' = {
 }
 
 @description('The name of the SQL database')
-output sqlDatabaseName string = databaseName
+output sqlDatabaseName string = name
 
 @description('The resource ID of the SQL database')
 output sqlDatabaseId string = sqlDatabase.id

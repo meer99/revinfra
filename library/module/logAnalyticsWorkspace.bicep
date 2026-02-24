@@ -1,18 +1,15 @@
 // Module: Log Analytics Workspace
 // Description: Creates a Log Analytics workspace for monitoring
 
-@description('Environment name (dev1, sit, uat, prod)')
-param environment string
-
 @description('Azure region for resources')
 param location string = 'australiaeast'
 
 @description('Tags to apply to the workspace')
 param tags object = {}
 
-@description('Log Analytics workspace name pattern')
+@description('Log Analytics workspace name')
 @minLength(4)
-param namePattern string = 'log-ae-bcrevdata'
+param name string
 
 @description('Workspace SKU')
 @allowed(['PerGB2018', 'Free', 'Standalone', 'PerNode'])
@@ -23,10 +20,8 @@ param sku string = 'PerGB2018'
 @maxValue(730)
 param retentionInDays int = 30
 
-var workspaceName = '${namePattern}-${environment}'
-
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-  name: workspaceName
+  name: name
   location: location
   tags: tags
   properties: {

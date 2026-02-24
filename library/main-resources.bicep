@@ -11,8 +11,8 @@ param location string
 @description('Tags to apply to resources')
 param tags object
 
-@description('Name patterns for resources')
-param namePatterns object
+@description('Resource names')
+param names object
 
 @description('Environment parameters')
 param envParams object
@@ -33,10 +33,9 @@ param privateDnsZoneIdCae string
 module managedIdentity 'module/managedIdentity.bicep' = if (envParams.deployManagedIdentity) {
   name: 'deploy-mi-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
-    namePattern: namePatterns.managedIdentity
+    name: '${names.managedIdentity}-${environment}'
   }
 }
 
@@ -44,10 +43,9 @@ module managedIdentity 'module/managedIdentity.bicep' = if (envParams.deployMana
 module logAnalyticsWorkspace 'module/logAnalyticsWorkspace.bicep' = if (envParams.deployLogAnalyticsWorkspace) {
   name: 'deploy-log-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
-    namePattern: namePatterns.logAnalyticsWorkspace
+    name: '${names.logAnalyticsWorkspace}-${environment}'
   }
 }
 
@@ -55,14 +53,13 @@ module logAnalyticsWorkspace 'module/logAnalyticsWorkspace.bicep' = if (envParam
 module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deployContainerRegistry) {
   name: 'deploy-acr-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
-    namePattern: namePatterns.containerRegistry
+    name: '${names.containerRegistry}${environment}'
     managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     deployPrivateEndpoint: envParams.deployPrivateEndpointCr
     subnetId: subnetId
-    privateEndpointNamePattern: namePatterns.privateEndpointCr
+    privateEndpointName: '${names.privateEndpointCr}-${environment}'
     privateDnsZoneId: privateDnsZoneIdCr
   }
 }
@@ -71,16 +68,15 @@ module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deploy
 module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (envParams.deployContainerAppsEnvironment) {
   name: 'deploy-cae-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
-    namePattern: namePatterns.containerAppsEnvironment
+    name: '${names.containerAppsEnvironment}-${environment}'
     managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     logAnalyticsCustomerId: logAnalyticsWorkspace.?outputs.workspaceCustomerId ?? ''
     logAnalyticsSharedKey: logAnalyticsWorkspace.?outputs.workspaceSharedKey ?? ''
     deployPrivateEndpoint: envParams.deployPrivateEndpointCae
     subnetId: subnetId
-    privateEndpointNamePattern: namePatterns.privateEndpointCae
+    privateEndpointName: '${names.privateEndpointCae}-${environment}'
     privateDnsZoneId: privateDnsZoneIdCae
   }
 }
@@ -89,12 +85,12 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
 module containerAppJobaccsync 'module/containerAppJob1.bicep' = if (envParams.deployContainerAppJobaccsync) {
   name: 'deploy-caj-accsync-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
     containerAppsEnvironmentId: containerAppsEnvironment.?outputs.containerAppsEnvironmentId ?? ''
     managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     containerImage: envParams.containerImage
+    name: '${names.containerAppJobaccsync}-${environment}'
   }
 }
 
@@ -102,12 +98,12 @@ module containerAppJobaccsync 'module/containerAppJob1.bicep' = if (envParams.de
 module containerAppJobsah 'module/containerAppJob2.bicep' = if (envParams.deployContainerAppJobsah) {
   name: 'deploy-caj-sah-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
     containerAppsEnvironmentId: containerAppsEnvironment.?outputs.containerAppsEnvironmentId ?? ''
     managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     containerImage: envParams.containerImage
+    name: '${names.containerAppJobsah}-${environment}'
   }
 }
 
@@ -115,15 +111,14 @@ module containerAppJobsah 'module/containerAppJob2.bicep' = if (envParams.deploy
 module sqlServer 'module/sqlServer.bicep' = if (envParams.deploySqlServer) {
   name: 'deploy-sql-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
-    namePattern: namePatterns.sqlServer
+    name: '${names.sqlServer}-${environment}'
     administratorLogin: envParams.sqlAdministratorLogin
     administratorLoginPassword: envParams.sqlAdministratorLoginPassword
     deployPrivateEndpoint: envParams.deployPrivateEndpointSql
     subnetId: subnetId
-    privateEndpointNamePattern: namePatterns.privateEndpointSql
+    privateEndpointName: '${names.privateEndpointSql}-${environment}'
     privateDnsZoneId: privateDnsZoneIdSql
   }
 }
@@ -132,10 +127,9 @@ module sqlServer 'module/sqlServer.bicep' = if (envParams.deploySqlServer) {
 module sqlDatabase 'module/sqlDatabase.bicep' = if (envParams.deploySqlDatabase) {
   name: 'deploy-db-${environment}'
   params: {
-    environment: environment
     location: location
     tags: tags
-    namePattern: namePatterns.sqlDatabase
+    name: '${names.sqlDatabase}-${environment}'
     sqlServerName: sqlServer.?outputs.sqlServerName ?? ''
   }
 }

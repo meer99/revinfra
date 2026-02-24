@@ -2,17 +2,14 @@
 // Description: Creates an Azure Container Registry with Premium SKU for private endpoint support
 // Note: Public access is disabled, private access is enabled
 
-@description('Environment name (dev1, sit, uat, prod)')
-param environment string
-
 @description('Azure region for resources')
 param location string = 'australiaeast'
 
 @description('Tags to apply to the container registry')
 param tags object = {}
 
-@description('Container registry name pattern')
-param namePattern string = 'acraebcrev'
+@description('Container registry name')
+param name string
 
 @description('Managed identity resource ID')
 param managedIdentityId string
@@ -30,18 +27,14 @@ param deployPrivateEndpoint bool = false
 @description('Subnet resource ID where the private endpoint will be created')
 param subnetId string = ''
 
-@description('Private endpoint name pattern')
-param privateEndpointNamePattern string = ''
+@description('Private endpoint name')
+param privateEndpointName string = ''
 
 @description('Private DNS zone resource ID for the container registry')
 param privateDnsZoneId string = ''
 
-// Container registry names cannot contain hyphens or underscores, only alphanumeric
-var containerRegistryName = '${namePattern}${environment}'
-var privateEndpointName = '${privateEndpointNamePattern}-${environment}'
-
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
-  name: containerRegistryName
+  name: name
   location: location
   tags: tags
   sku: {

@@ -2,17 +2,14 @@
 // Description: Creates a Container Apps Environment with workload profiles.
 //       Private connectivity is achieved via private endpoints.
 
-@description('Environment name (dev1, sit, uat, prod)')
-param environment string
-
 @description('Azure region for resources')
 param location string = 'australiaeast'
 
 @description('Tags to apply to the container apps environment')
 param tags object = {}
 
-@description('Container Apps Environment name pattern')
-param namePattern string = 'cae-ae-bcrev'
+@description('Container Apps Environment name')
+param name string
 
 @description('Managed identity resource ID')
 param managedIdentityId string
@@ -30,17 +27,14 @@ param deployPrivateEndpoint bool = false
 @description('Subnet resource ID where the private endpoint will be created')
 param subnetId string = ''
 
-@description('Private endpoint name pattern')
-param privateEndpointNamePattern string = ''
+@description('Private endpoint name')
+param privateEndpointName string = ''
 
 @description('Private DNS zone resource ID for the container apps environment')
 param privateDnsZoneId string = ''
 
-var containerAppsEnvironmentName = '${namePattern}-${environment}'
-var privateEndpointName = '${privateEndpointNamePattern}-${environment}'
-
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-10-02-preview' = {
-  name: containerAppsEnvironmentName
+  name: name
   location: location
   tags: tags
   identity: {
