@@ -31,4 +31,4 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'scriptPath'
       scriptPath: 'library/deploy.sh'
-      arguments: '${{ parameters.environment }} --confirm'
+      arguments: '${{ parameters.environment }}'

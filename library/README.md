@@ -57,20 +57,10 @@ The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the
 ### Manual Deployment
 
 ```bash
-# Preview changes (What-If)
-./deploy.sh dev1 --what-if
-
-# Deploy to Dev1
-./deploy.sh dev1 --confirm
-
-# Deploy to SIT
-./deploy.sh sit --confirm
-
-# Deploy to UAT
-./deploy.sh uat --confirm
-
-# Deploy to Prod
-./deploy.sh prod --confirm
+./deploy.sh dev1    # Deploy to Dev1
+./deploy.sh sit     # Deploy to SIT
+./deploy.sh uat     # Deploy to UAT
+./deploy.sh prod    # Deploy to Prod
 ```
 
 ## Support
