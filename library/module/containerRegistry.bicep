@@ -24,8 +24,21 @@ param sku string = 'Premium'
 @description('Enable admin user')
 param adminUserEnabled bool = false
 
+@description('Deploy private endpoint for the container registry')
+param deployPrivateEndpoint bool = false
+
+@description('Subnet resource ID where the private endpoint will be created')
+param subnetId string = ''
+
+@description('Private endpoint name pattern')
+param privateEndpointNamePattern string = ''
+
+@description('Private DNS zone resource ID for the container registry')
+param privateDnsZoneId string = ''
+
 // Container registry names cannot contain hyphens or underscores, only alphanumeric
 var containerRegistryName = '${namePattern}${environment}'
+var privateEndpointName = '${privateEndpointNamePattern}-${environment}'
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: containerRegistryName
@@ -52,6 +65,41 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' =
   }
 }
 
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2023-05-01' = if (deployPrivateEndpoint) {
+  name: privateEndpointName
+  location: location
+  tags: tags
+  properties: {
+    subnet: {
+      id: subnetId
+    }
+    privateLinkServiceConnections: [
+      {
+        name: privateEndpointName
+        properties: {
+          privateLinkServiceId: containerRegistry.id
+          groupIds: ['registry']
+        }
+      }
+    ]
+  }
+}
+
+resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-05-01' = if (deployPrivateEndpoint) {
+  parent: privateEndpoint
+  name: 'default'
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'privatelink-azurecr-io'
+        properties: {
+          privateDnsZoneId: privateDnsZoneId
+        }
+      }
+    ]
+  }
+}
+
 @description('The name of the container registry')
 output containerRegistryName string = containerRegistry.name
 
@@ -60,3 +108,6 @@ output containerRegistryId string = containerRegistry.id
 
 @description('The login server of the container registry')
 output containerRegistryLoginServer string = containerRegistry.properties.loginServer
+
+@description('The name of the private endpoint')
+output privateEndpointName string = deployPrivateEndpoint ? privateEndpoint.name : ''

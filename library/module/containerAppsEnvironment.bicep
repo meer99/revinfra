@@ -24,7 +24,20 @@ param logAnalyticsCustomerId string
 @secure()
 param logAnalyticsSharedKey string
 
+@description('Deploy private endpoint for the container apps environment')
+param deployPrivateEndpoint bool = false
+
+@description('Subnet resource ID where the private endpoint will be created')
+param subnetId string = ''
+
+@description('Private endpoint name pattern')
+param privateEndpointNamePattern string = ''
+
+@description('Private DNS zone resource ID for the container apps environment')
+param privateDnsZoneId string = ''
+
 var containerAppsEnvironmentName = '${namePattern}-${environment}'
+var privateEndpointName = '${privateEndpointNamePattern}-${environment}'
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-10-02-preview' = {
   name: containerAppsEnvironmentName
@@ -55,6 +68,41 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-10-02-
   }
 }
 
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2023-05-01' = if (deployPrivateEndpoint) {
+  name: privateEndpointName
+  location: location
+  tags: tags
+  properties: {
+    subnet: {
+      id: subnetId
+    }
+    privateLinkServiceConnections: [
+      {
+        name: privateEndpointName
+        properties: {
+          privateLinkServiceId: containerAppsEnvironment.id
+          groupIds: ['managedEnvironments']
+        }
+      }
+    ]
+  }
+}
+
+resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-05-01' = if (deployPrivateEndpoint) {
+  parent: privateEndpoint
+  name: 'default'
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'privatelink-azurecontainerapps-io'
+        properties: {
+          privateDnsZoneId: privateDnsZoneId
+        }
+      }
+    ]
+  }
+}
+
 @description('The name of the container apps environment')
 output containerAppsEnvironmentName string = containerAppsEnvironment.name
 
@@ -66,3 +114,6 @@ output containerAppsEnvironmentDefaultDomain string = containerAppsEnvironment.p
 
 @description('The static IP address of the container apps environment')
 output containerAppsEnvironmentStaticIp string = containerAppsEnvironment.properties.staticIp
+
+@description('The name of the private endpoint')
+output privateEndpointName string = deployPrivateEndpoint ? privateEndpoint.name : ''

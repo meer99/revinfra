@@ -1,6 +1,6 @@
 // Main Orchestrator
 // Description: Main Bicep file that orchestrates the deployment of all resources
-// Target Scope: subscription
+// Target Scope: subscription (uses existing resource group)
 
 targetScope = 'subscription'
 
@@ -25,21 +25,16 @@ var namePatterns = variables.namePatterns
 // Construct the subnet resource ID explicitly to avoid cross-resource-group scope issues
 var subnetId = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${variables.networkResourceGroup}/providers/Microsoft.Network/virtualNetworks/${variables.virtualNetwork}/subnets/${variables.subnet}'
 
-// 1. Deploy Resource Group
-var resourceGroupName = '${namePatterns.resourceGroup}-${environment}'
+// Construct private DNS zone resource IDs
+var privateDnsZoneIdCr = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${variables.networkResourceGroup}/providers/Microsoft.Network/privateDnsZones/${variables.privateDnsZones.containerRegistry}'
+var privateDnsZoneIdSql = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${variables.networkResourceGroup}/providers/Microsoft.Network/privateDnsZones/${variables.privateDnsZones.sqlServer}'
+var privateDnsZoneIdCae = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${variables.networkResourceGroup}/providers/Microsoft.Network/privateDnsZones/${variables.privateDnsZones.containerAppsEnvironment}'
 
-module resourceGroup 'module/resourceGroup.bicep' = if (envParams.deployResourceGroup) {
-  name: 'deploy-rg-${environment}'
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.resourceGroup
-  }
-}
+// Use existing resource group
+var resourceGroupName = variables.resourceGroup
 
-// 2. Deploy resources to resource group
-var deployResources = envParams.deployManagedIdentity || envParams.deployLogAnalyticsWorkspace || envParams.deployContainerRegistry || envParams.deployContainerAppsEnvironment || envParams.deployContainerAppJobaccsync || envParams.deployContainerAppJobsah || envParams.deploySqlServer || envParams.deploySqlDatabase || envParams.deployPrivateEndpointCr || envParams.deployPrivateEndpointCae || envParams.deployPrivateEndpointSql
+// Deploy resources to existing resource group
+var deployResources = envParams.deployManagedIdentity || envParams.deployLogAnalyticsWorkspace || envParams.deployContainerRegistry || envParams.deployContainerAppsEnvironment || envParams.deployContainerAppJobaccsync || envParams.deployContainerAppJobsah || envParams.deploySqlServer || envParams.deploySqlDatabase
 
 module resources 'main-resources.bicep' = if (deployResources) {
   name: 'deploy-resources-${environment}'
@@ -51,14 +46,14 @@ module resources 'main-resources.bicep' = if (deployResources) {
     namePatterns: namePatterns
     envParams: envParams
     subnetId: subnetId
+    privateDnsZoneIdCr: privateDnsZoneIdCr
+    privateDnsZoneIdSql: privateDnsZoneIdSql
+    privateDnsZoneIdCae: privateDnsZoneIdCae
   }
-  dependsOn: [
-    resourceGroup
-  ]
 }
 
 // Outputs
-output resourceGroupName string = resourceGroup.?outputs.resourceGroupName ?? resourceGroupName
+output resourceGroupName string = resourceGroupName
 output managedIdentityId string = resources.?outputs.managedIdentityId ?? ''
 output containerRegistryName string = resources.?outputs.containerRegistryName ?? ''
 output containerRegistryLoginServer string = resources.?outputs.containerRegistryLoginServer ?? ''
