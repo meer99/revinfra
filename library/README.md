@@ -20,7 +20,7 @@ library/
 │   ├── tags.json                        # Common tags for all resources
 │   ├── variable.json                    # Shared variables (names, location, etc.)
 │   └── parameters.json                  # Environment-specific parameters
-├── main.bicep                           # Main orchestrator template (all resources)
+├── main.bicep                           # Main orchestrator template
 ├── deploy.sh                            # Deployment script
 └── azure-pipeline.yml                   # Azure DevOps pipeline
 ```

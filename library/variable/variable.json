@@ -4,7 +4,7 @@
   "networkResourceGroup": "rg-ae-net-test",
   "virtualNetwork": "vnet-ae-internal-test",
   "subnet": "snet-ae-bcrev",
-  "resourceGroup": "rg-ae-bcrev",
+  "resourceGroup": "rg-ae-bcre",
   "names": {
     "managedIdentity": "mi-ae-bcrevdata",
     "containerRegistry": "acraebcrev",
