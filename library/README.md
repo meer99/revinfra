@@ -73,3 +73,19 @@ The pipeline (`azure-pipeline.yml`) validates Bicep templates and deploys to the
 ## Support
 
 For issues or questions, please contact the Infrastructure Team.
+
+## Troubleshooting
+
+### AADSTS700016: Application not found in directory
+
+If you see the error:
+```
+AADSTS700016: Application with identifier '...' was not found in the directory
+```
+
+This means the service principal used by the Azure service connection is not registered in the target Azure AD tenant. To fix:
+
+1. **Verify the service connection** in Azure DevOps → Project Settings → Service connections.
+2. Ensure the **Tenant ID** on the service connection matches the Azure AD tenant that owns your subscription.
+3. Ensure the **Application (client) ID** corresponds to a valid App Registration in that tenant.
+4. When running the pipeline, select the correct service connection name via the **Azure Service Connection** parameter.

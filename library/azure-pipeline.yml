@@ -12,12 +12,13 @@ parameters:
       - sit
       - uat
       - prod
+  - name: azureServiceConnection
+    displayName: 'Azure Service Connection'
+    type: string
+    default: 'ado-sb'
 
 pool:
   vmImage: 'ubuntu-latest'
-
-variables:
-  azureServiceConnection: 'ado-sb'
 
 steps:
   - script: az bicep build --file main.bicep
@@ -27,8 +28,9 @@ steps:
   - task: AzureCLI@2
     displayName: 'Deploy Infrastructure (${{ parameters.environment }})'
     inputs:
-      azureSubscription: ${{ variables.azureServiceConnection }}
+      azureSubscription: ${{ parameters.azureServiceConnection }}
       scriptType: 'bash'
       scriptLocation: 'scriptPath'
       scriptPath: 'library/deploy.sh'
       arguments: '${{ parameters.environment }} --confirm'
+      addSpnToEnvironment: true
