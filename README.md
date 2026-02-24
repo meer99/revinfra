@@ -44,7 +44,6 @@ revinfra/
 │   ├── module/                     # Reusable Bicep modules
 │   ├── variable/                   # Configuration files
 │   ├── main.bicep                  # Main orchestrator
-│   ├── main-resources.bicep        # Resource group scoped deployments
 │   ├── deploy.sh                   # Deployment script
 │   ├── azure-pipeline.yml          # Azure DevOps pipeline
 │   └── README.md                   # Detailed documentation
