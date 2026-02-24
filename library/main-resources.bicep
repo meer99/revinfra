@@ -1,5 +1,5 @@
 // Resources Module
-// Description: Deploys all resources within the resource group
+// Description: Deploys all resources within the existing resource group
 // Target Scope: resourceGroup
 
 @description('Environment name (dev1, sit, uat, prod)')
@@ -19,6 +19,15 @@ param envParams object
 
 @description('Resource ID of the existing subnet for private endpoints')
 param subnetId string
+
+@description('Private DNS zone resource ID for Container Registry')
+param privateDnsZoneIdCr string
+
+@description('Private DNS zone resource ID for SQL Server')
+param privateDnsZoneIdSql string
+
+@description('Private DNS zone resource ID for Container Apps Environment')
+param privateDnsZoneIdCae string
 
 // 1. Deploy Managed Identity
 module managedIdentity 'module/managedIdentity.bicep' = if (envParams.deployManagedIdentity) {
@@ -42,7 +51,7 @@ module logAnalyticsWorkspace 'module/logAnalyticsWorkspace.bicep' = if (envParam
   }
 }
 
-// 3. Deploy Container Registry
+// 3. Deploy Container Registry (with optional private endpoint)
 module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deployContainerRegistry) {
   name: 'deploy-acr-${environment}'
   params: {
@@ -51,10 +60,14 @@ module containerRegistry 'module/containerRegistry.bicep' = if (envParams.deploy
     tags: tags
     namePattern: namePatterns.containerRegistry
     managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
+    deployPrivateEndpoint: envParams.deployPrivateEndpointCr
+    subnetId: subnetId
+    privateEndpointNamePattern: namePatterns.privateEndpointCr
+    privateDnsZoneId: privateDnsZoneIdCr
   }
 }
 
-// 4. Deploy Container Apps Environment
+// 4. Deploy Container Apps Environment (with optional private endpoint)
 module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (envParams.deployContainerAppsEnvironment) {
   name: 'deploy-cae-${environment}'
   params: {
@@ -65,6 +78,10 @@ module containerAppsEnvironment 'module/containerAppsEnvironment.bicep' = if (en
     managedIdentityId: managedIdentity.?outputs.managedIdentityId ?? ''
     logAnalyticsCustomerId: logAnalyticsWorkspace.?outputs.workspaceCustomerId ?? ''
     logAnalyticsSharedKey: logAnalyticsWorkspace.?outputs.workspaceSharedKey ?? ''
+    deployPrivateEndpoint: envParams.deployPrivateEndpointCae
+    subnetId: subnetId
+    privateEndpointNamePattern: namePatterns.privateEndpointCae
+    privateDnsZoneId: privateDnsZoneIdCae
   }
 }
 
@@ -94,7 +111,7 @@ module containerAppJobsah 'module/containerAppJob2.bicep' = if (envParams.deploy
   }
 }
 
-// 7. Deploy SQL Server
+// 7. Deploy SQL Server (with optional private endpoint)
 module sqlServer 'module/sqlServer.bicep' = if (envParams.deploySqlServer) {
   name: 'deploy-sql-${environment}'
   params: {
@@ -104,6 +121,10 @@ module sqlServer 'module/sqlServer.bicep' = if (envParams.deploySqlServer) {
     namePattern: namePatterns.sqlServer
     administratorLogin: envParams.sqlAdministratorLogin
     administratorLoginPassword: envParams.sqlAdministratorLoginPassword
+    deployPrivateEndpoint: envParams.deployPrivateEndpointSql
+    subnetId: subnetId
+    privateEndpointNamePattern: namePatterns.privateEndpointSql
+    privateDnsZoneId: privateDnsZoneIdSql
   }
 }
 
@@ -119,48 +140,6 @@ module sqlDatabase 'module/sqlDatabase.bicep' = if (envParams.deploySqlDatabase)
   }
 }
 
-// 9. Deploy Private Endpoint for Container Registry
-module privateEndpointCr 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCr && envParams.deployContainerRegistry) {
-  name: 'deploy-pe-cr-${environment}'
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.privateEndpointCr
-    privateLinkServiceId: containerRegistry.?outputs.containerRegistryId ?? ''
-    groupIds: ['registry']
-    subnetId: subnetId
-  }
-}
-
-// 10. Deploy Private Endpoint for Container Apps Environment
-module privateEndpointCae 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointCae && envParams.deployContainerAppsEnvironment) {
-  name: 'deploy-pe-cae-${environment}'
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.privateEndpointCae
-    privateLinkServiceId: containerAppsEnvironment.?outputs.containerAppsEnvironmentId ?? ''
-    groupIds: ['managedEnvironments']
-    subnetId: subnetId
-  }
-}
-
-// 11. Deploy Private Endpoint for SQL Server
-module privateEndpointSql 'module/privateEndpoint.bicep' = if (envParams.deployPrivateEndpointSql && envParams.deploySqlServer) {
-  name: 'deploy-pe-sql-${environment}'
-  params: {
-    environment: environment
-    location: location
-    tags: tags
-    namePattern: namePatterns.privateEndpointSql
-    privateLinkServiceId: sqlServer.?outputs.sqlServerId ?? ''
-    groupIds: ['sqlServer']
-    subnetId: subnetId
-  }
-}
-
 // Outputs
 output managedIdentityId string = managedIdentity.?outputs.managedIdentityId ?? ''
 output containerRegistryName string = containerRegistry.?outputs.containerRegistryName ?? ''
@@ -171,6 +150,6 @@ output containerAppsEnvironmentId string = containerAppsEnvironment.?outputs.con
 output sqlServerName string = sqlServer.?outputs.sqlServerName ?? ''
 output sqlServerId string = sqlServer.?outputs.sqlServerId ?? ''
 output sqlDatabaseName string = sqlDatabase.?outputs.sqlDatabaseName ?? ''
-output privateEndpointCrName string = privateEndpointCr.?outputs.privateEndpointName ?? ''
-output privateEndpointCaeName string = privateEndpointCae.?outputs.privateEndpointName ?? ''
-output privateEndpointSqlName string = privateEndpointSql.?outputs.privateEndpointName ?? ''
+output privateEndpointCrName string = containerRegistry.?outputs.privateEndpointName ?? ''
+output privateEndpointCaeName string = containerAppsEnvironment.?outputs.privateEndpointName ?? ''
+output privateEndpointSqlName string = sqlServer.?outputs.privateEndpointName ?? ''

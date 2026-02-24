@@ -4,8 +4,8 @@
   "networkResourceGroup": "rg-ae-net-test",
   "virtualNetwork": "vnet-ae-internal-test",
   "subnet": "snet-ae-bcrev",
+  "resourceGroup": "rg-ae-bcre",
   "namePatterns": {
-    "resourceGroup": "rg-ae-bcrev",
     "managedIdentity": "mi-ae-bcrevdata",
     "containerRegistry": "acraebcrev",
     "containerAppsEnvironment": "cae-ae-bcrev",
@@ -17,5 +17,10 @@
     "privateEndpointCr": "pe-ae-acr-bcrev",
     "privateEndpointCae": "pe-ae-cae-bcrev",
     "privateEndpointSql": "pe-ae-sql-bcrevdata"
+  },
+  "privateDnsZones": {
+    "containerRegistry": "privatelink.azurecr.io",
+    "sqlServer": "privatelink.database.windows.net",
+    "containerAppsEnvironment": "privatelink.australiaeast.azurecontainerapps.io"
   }
 }

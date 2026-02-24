@@ -1,6 +1,5 @@
 {
   "dev1": {
-    "deployResourceGroup": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
@@ -17,7 +16,6 @@
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "sit": {
-    "deployResourceGroup": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
@@ -34,7 +32,6 @@
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "uat": {
-    "deployResourceGroup": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
@@ -51,7 +48,6 @@
     "containerImage": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
   },
   "prod": {
-    "deployResourceGroup": true,
     "deployManagedIdentity": true,
     "deployLogAnalyticsWorkspace": true,
     "deployContainerRegistry": true,
